@@ -234,7 +234,8 @@ body {
 }
 
 .github img {
-  max-height: 40px;
+  max-height: 45px;
+  margin: 9px;
 }
 
 .right_half_column {
