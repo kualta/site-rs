@@ -220,8 +220,21 @@ body {
   text-align: left;
 }
 
-.gbage img {
+.badge {
+  display: inline;
+}
+
+.gbadge img {
   max-height: 60px;
+}
+
+.gitlab img {
+  max-height: 40px;
+  margin: 10px;
+}
+
+.github img {
+  max-height: 40px;
 }
 
 .right_half_column {
