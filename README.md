@@ -1,2 +1,2 @@
-# lectro.moe
-Created with CodeSandbox
+# https://lectro.moe/
+
