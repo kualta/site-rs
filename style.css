@@ -18,16 +18,15 @@ body {
   margin: 0;
   margin-left: 20%;
   margin-right: 20%;
+  overflow: auto;
   color: white;
-  background: rgb(0, 0, 0);
-  background: linear-gradient(
-    285deg,
+  background-image: linear-gradient(
+    180deg,
     rgba(0, 0, 0, 1) 0%,
-    rgba(6, 17, 51, 1) 100%
+    rgba(25, 27, 61, 1) 75%
   );
   height: 100%;
   background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 
 .title_bar {
@@ -243,7 +242,8 @@ body {
 
 .github img {
   max-height: 45px;
-  margin: 9px;
+  margin-top: 9px;
+  margin-bottom: 9px;
 }
 
 .right_half_column {
