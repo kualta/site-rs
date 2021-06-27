@@ -1,3 +1,6 @@
+* {
+  scroll-behavior: smooth;
+}
 html {
   scroll-behavior: smooth;
   height: 100%;
@@ -164,6 +167,41 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+.gradient1 {
+  background: rgb(119, 121, 255);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient1_border {
+  color: rgb(83, 85, 199);
+}
+
+.gradient2 {
+  background: rgb(184, 187, 29);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient2_border {
+  color: rgb(173, 175, 49);
+}
+
+.gradient3 {
+  background: rgb(218, 49, 119);
+  background: linear-gradient(
+    90deg,
+    rgb(89, 255, 191) 0%,
+    rgb(39, 172, 154) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient3_border {
+  color: rgb(86, 255, 114);
+}
+
 .right_half_column a {
   color: white;
   text-decoration: underline !important;
@@ -235,6 +273,11 @@ body {
   max-height: 60px;
 }
 
+.abadge img {
+  max-height: 40px;
+  margin: 10px;
+}
+
 .gitlab img {
   max-height: 40px;
   margin: 10px;
@@ -277,6 +320,15 @@ body {
   font-style: normal;
   font-weight: 400;
   font-size: 130%;
+  margin: 0px;
+}
+
+.right_column h3 {
+  color: white;
+  font-family: "robotoregular", Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 100%;
   margin: 0px;
 }
 
