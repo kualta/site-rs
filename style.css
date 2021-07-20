@@ -103,6 +103,15 @@ body {
   height: auto;
 }
 
+.articles_list a {
+  color: white;
+  font-family: "robotobold", Arial, sans-serif;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 150%;
+  margin: 0px;
+}
+
 .main_content h1 {
   width: 100%;
   background: rgb(63, 94, 251);
