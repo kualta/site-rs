@@ -3,16 +3,25 @@ use yew::prelude::*;
 #[function_component(TopBar)]
 pub fn top_bar() -> Html {
     html! {
-        <div>
-            { "Top Bar" }
+        <div class="flex flex-row items-center place-content-between m-4">
+            <div class="flex flex-row items-center">
+                <img src="assets/img/ps2doggy.jpg" alt="doggy" class="rounded-full outline outline-offset-4 m-4 w-16 " />
+                <h3 class="m-4 text-3xl">{ "lectro.moe" }</h3>
+            </div>
+
+            <div class="place-self-end flex flex-row items-center m-8 gap-16">
+                <a href="#projects">{ "Projects" }</a>
+                <a href="#articles">{ "Articles" }</a>
+                <a href="#contacts">{ "Contacts" }</a>
+            </div>
         </div>
     }
 }
 
 #[function_component(Projects)]
-pub fn prjects() -> Html {
+pub fn projects() -> Html {
     html! {
-        <div>
+        <div id="projects" class="h-96">
             { "Projects" }
         </div>
     }
@@ -21,7 +30,7 @@ pub fn prjects() -> Html {
 #[function_component(Articles)]
 pub fn articles() -> Html {
     html! {
-        <div>
+        <div id="articles" class="h-96">
             { "Articles" }
         </div>
     }
@@ -30,7 +39,7 @@ pub fn articles() -> Html {
 #[function_component(Contacts)]
 pub fn contacts() -> Html {
     html! {
-        <div>
+        <div id="contacts" class="h-96">
             { "Contacts" }
         </div>
     }
@@ -39,11 +48,16 @@ pub fn contacts() -> Html {
 #[function_component(App)]
 pub fn app() -> Html {
     html! {
-        <main>
-            <TopBar />
-            <Projects />
-            <Articles />
-            <Contacts />
+        <main class="font-['Roboto'] bg-black">
+            <bg class="h-screen w-screen fixed bg-fixed bg-gradient-to-b from-black to-slate-900"> </bg>
+            <content class="absolute w-full">
+                <div class="flex flex-col w-1/2 mx-auto text-white ">
+                    <TopBar />
+                    <Projects />
+                    <Articles />
+                    <Contacts />
+                </div>
+            </content>
         </main>
     }
 }
