@@ -9,3 +9,4 @@ getrandom = { version = "0.2.7", features = ["js"] }
 gloo = "0.8.0"
 rand = "0.8.5"
 yew = "0.19.3"
+thiserror = "1.0.37"

@@ -3,6 +3,9 @@ use rand::prelude::*;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
 
+mod audio_lib;
+use audio_lib::AudioLibrary;
+
 const PROJECTS_GRADIENT: &str =
     "bg-gradient-to-r from-rose-400 to-fuchsia-500 text-transparent bg-clip-text";
 const ARTICLES_GRADIENT: &str =
@@ -15,6 +18,13 @@ const LECTRO_GRADIENT: &str = "bg-gradient-to-r from-red-200 via-red-300 to-yell
 pub fn avatar() -> Html {
     let animation = use_state(|| "");
     let is_active = use_state(|| true);
+    let audio_lib = use_state(|| {
+        // AudioLibrary::new_from_dir(path) TODO!
+        let mut lib = AudioLibrary::default();
+        lib.insert("/assets/sound/medal_click.wav").unwrap();
+        lib.insert("/assets/sound/medal_click_rare.wav").unwrap();
+        lib
+    });
 
     if !*is_active {
         let active = is_active.clone();
@@ -31,17 +41,16 @@ pub fn avatar() -> Html {
             Callback::from(|_| {})
         } else if result == 0 {
             Callback::from(move |_| {
-                let _ = HtmlAudioElement::new_with_src("/assets/sound/medal_click_rare.wav")
-                    .unwrap()
-                    .play();
+                audio_lib.play("/assets/sound/medal_click_rare.wav").unwrap();
                 is_active.set(false);
                 animation.set("flip");
             })
         } else {
             Callback::from(move |_| {
-                let _ = HtmlAudioElement::new_with_src("/assets/sound/medal_click.wav")
-                    .unwrap()
-                    .play();
+                audio_lib.play("/assets/sound/medal_click.wav").unwrap();
+                // let _ = HtmlAudioElement::new_with_src("/assets/sound/medal_click.wav")
+                //     .expect("Failed to create a new HtmlAudioElement")
+                //     .play();
                 if *animation == "shake-x" {
                     animation.set("shake-y");
                 } else {
@@ -53,7 +62,7 @@ pub fn avatar() -> Html {
 
     html! {
         <div role="button" class={format!("flex shrink-0 items-center rounded-full p-1 m-4 w-20 {} {}", LECTRO_GRADIENT, *animation)} {onclick}>
-            <img src="assets/img/ps2doggy.png" alt="doggy" class="rounded-full "/>
+            <img src="assets/img/ps2doggy.png" alt="doggy" class="rounded-full"/>
         </div>
     }
 }
@@ -78,8 +87,10 @@ pub fn top_bar() -> Html {
 #[function_component(Status)]
 pub fn status() -> Html {
     html! {
-        <div id="status" class="h-96 h-screen">
-            <h1 class="text-6xl font-bold p-4 inline-block">{ "STATUS" }</h1>
+        <div id="status" class="flex flex-col lg:flex-row items-center place-content-between p-4 h-screen">
+            <div class="">
+                <h1 class="text-stone-300 text-3xl font-medium"> { "Gameplay, Core systems & Tools programmer" } </h1>
+            </div>
         </div>
     }
 }
@@ -113,6 +124,7 @@ pub fn contacts() -> Html {
 
 #[function_component(App)]
 pub fn app() -> Html {
+
     html! {
         <main class="font-['Roboto'] w-max h-max">
             <bg class="h-full w-full fixed bg-fixed bg-gradient-to-b from-black to-slate-900"> </bg>
