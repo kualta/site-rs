@@ -4,13 +4,15 @@ use gloo::timers::callback::Timeout;
 use rand::prelude::*;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
+mod project;
+use project::*;
 
 const PROJECTS_GRADIENT: &str =
     "bg-gradient-to-r from-rose-400 to-fuchsia-500 text-transparent bg-clip-text";
 const ARTICLES_GRADIENT: &str =
     "bg-gradient-to-r from-pink-300 to-indigo-400 text-transparent bg-clip-text";
 const CONTACTS_GRADIENT: &str =
-    "bg-gradient-to-r from-yellow-100 to-yellow-300 text-transparent bg-clip-text";
+    "bg-gradient-to-r from-green-200 via-emerald-200  to-green-300 text-transparent bg-clip-text";
 const RUST_GRADIENT: &str =
     "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text ";
 const LECTRO_GRADIENT: &str = "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200";
@@ -73,7 +75,7 @@ pub fn top_bar() -> Html {
             <div class="flex flex-row lg:ml-auto text-xl font-medium p-8 gap-16">
                 <a href="#projects" class="transition-all hover:text-fuchsia-300">{ "projects" }</a>
                 <a href="#articles" class="transition-all hover:text-indigo-200">{ "articles" }</a>
-                <a href="#contacts" class="transition-all hover:text-yellow-200">{ "contacts" }</a>
+                <a href="#contacts" class="transition-all hover:text-green-200">{ "contacts" }</a>
             </div>
         </div>
     }
@@ -81,35 +83,71 @@ pub fn top_bar() -> Html {
 
 #[function_component(Status)]
 pub fn status() -> Html {
-    const COMMENT_STYLE: &str = "text-stone-500 font-mono inline-block";
     html! {
-        <div id="status" class="flex flex-grow flex-col text-3xl font-medium text-left place-content-around p-4">
+        <div id="status" class="roboto-mono mono flex flex-grow flex-col text-3xl text-left place-content-center gap-8 p-4">
             <div>
-                { "I write Engines, Systems and Tools " }
-                <span class={COMMENT_STYLE}>{ " //  mostly for games" }</span>
+                { "> I write Engines, Systems and Tools " }
             </div>
             <div>
-                { "Lately passionate about" } <br />
+                { "> Mostly in " }
                 <a href="https://www.rust-lang.org/" class={format!("inline-block {}", RUST_GRADIENT)}>{ "Rust" }</a>
-                { " and " }
-                <a href="https://en.wikipedia.org/wiki/Quantum_computing" class={format!("{}", ARTICLES_GRADIENT)}>{ "Quantum computing " }</a>
-                <span class={COMMENT_STYLE}>{ " //  separately so far" }</span>
             </div>
             <div>
-                { "Currently not occupied " }
-                <span class={COMMENT_STYLE}>{ " //  I could be working for you" }</span>
-                <br />
+                { "> " }
+                <a href="#contacts" class={format!("inline-block {}", CONTACTS_GRADIENT)}>{ " Open " }</a>
+                <a href="#contacts" class={format!("", )}>{ " for job proposals" }</a>
             </div>
-            <a href="#contacts" class={format!("text-center !underline decoration-solid {}", CONTACTS_GRADIENT)}>{ "hire me" }</a>
         </div>
     }
 }
 
 #[function_component(Projects)]
 pub fn projects() -> Html {
+    let projects = vec![Project {
+        name: "Fuji Bot".to_owned(),
+        description: "hardcore hypercasual game".to_owned(),
+        date: "SEP 2019".to_owned(),
+        status: StatusTag::Released,
+        lang: LangTag::Cs,
+        stack: vec![StackTag::Unity],
+        links: vec![ProjectLink::GitHub(
+            "https://github.com/lectromoe/fuji-bot".to_owned(),
+        )],
+    }];
+
+    let odd_row_style = "bg-gray-900 border-gray-700";
+    let even_row_style = "bg-gray-800 border-gray-700";
+    let column_style = "py-4 px-6 font-medium whitespace-nowrap";
+    let projects: Html = projects
+        .iter()
+        .enumerate()
+        .map(|(i, proj)| {
+            let row_style = if i % 2 == 0 {
+                even_row_style
+            } else {
+                odd_row_style
+            };
+
+            html! {
+                <tr class={row_style}>
+                    <th scope="row" class={column_style}>{&proj.name}</th>
+                    <div scope="row" class={column_style}>{&proj.name}</div>
+                    // <th scope="row" class={column_style}>{&proj.status}</th>
+                </tr>
+            }
+        })
+        .collect();
+
     html! {
         <div id="projects" class="h-96 h-screen">
             <h1 class={format!("text-6xl font-bold p-4 inline-block {}", PROJECTS_GRADIENT)}>{ "projects" }</h1>
+            <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left">
+                    <tbody>
+                        { projects }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
 }

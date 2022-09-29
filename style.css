@@ -69,3 +69,7 @@
         animation-timing-function: ease-in;
     }
 }
+
+.roboto-mono {
+    font-family: 'Roboto Mono', monospace;
+}
