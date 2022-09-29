@@ -1,10 +1,9 @@
+#![allow(clippy::let_unit_value)]
+
 use gloo::timers::callback::Timeout;
 use rand::prelude::*;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
-
-mod audio_lib;
-use audio_lib::AudioLibrary;
 
 const PROJECTS_GRADIENT: &str =
     "bg-gradient-to-r from-rose-400 to-fuchsia-500 text-transparent bg-clip-text";
@@ -18,13 +17,6 @@ const LECTRO_GRADIENT: &str = "bg-gradient-to-r from-red-200 via-red-300 to-yell
 pub fn avatar() -> Html {
     let animation = use_state(|| "");
     let is_active = use_state(|| true);
-    let audio_lib = use_state(|| {
-        // AudioLibrary::new_from_dir(path) TODO!
-        let mut lib = AudioLibrary::default();
-        lib.insert("/assets/sound/medal_click.wav").unwrap();
-        lib.insert("/assets/sound/medal_click_rare.wav").unwrap();
-        lib
-    });
 
     if !*is_active {
         let active = is_active.clone();
@@ -41,16 +33,17 @@ pub fn avatar() -> Html {
             Callback::from(|_| {})
         } else if result == 0 {
             Callback::from(move |_| {
-                audio_lib.play("/assets/sound/medal_click_rare.wav").unwrap();
+                let _ = HtmlAudioElement::new_with_src("/assets/sound/medal_click_rare.wav")
+                    .expect("Failed to load resource")
+                    .play();
                 is_active.set(false);
                 animation.set("flip");
             })
         } else {
             Callback::from(move |_| {
-                audio_lib.play("/assets/sound/medal_click.wav").unwrap();
-                // let _ = HtmlAudioElement::new_with_src("/assets/sound/medal_click.wav")
-                //     .expect("Failed to create a new HtmlAudioElement")
-                //     .play();
+                let _ = HtmlAudioElement::new_with_src("/assets/sound/medal_click.wav")
+                    .expect("Failed to load resource")
+                    .play();
                 if *animation == "shake-x" {
                     animation.set("shake-y");
                 } else {
@@ -124,7 +117,6 @@ pub fn contacts() -> Html {
 
 #[function_component(App)]
 pub fn app() -> Html {
-
     html! {
         <main class="font-['Roboto'] w-max h-max">
             <bg class="h-full w-full fixed bg-fixed bg-gradient-to-b from-black to-slate-900"> </bg>
