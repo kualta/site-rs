@@ -11,7 +11,9 @@ const ARTICLES_GRADIENT: &str =
     "bg-gradient-to-r from-pink-300 to-indigo-400 text-transparent bg-clip-text";
 const CONTACTS_GRADIENT: &str =
     "bg-gradient-to-r from-yellow-100 to-yellow-300 text-transparent bg-clip-text";
-const LECTRO_GRADIENT: &str = "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 ";
+const RUST_GRADIENT: &str =
+    "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text ";
+const LECTRO_GRADIENT: &str = "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200";
 
 #[function_component(Avatar)]
 pub fn avatar() -> Html {
@@ -68,10 +70,10 @@ pub fn top_bar() -> Html {
             <h3 class={format!("p-8 text-transparent bg-clip-text text-3xl font-bold {}", LECTRO_GRADIENT)}>
                 { "lectro.moe" }
             </h3>
-            <div class="flex flex-row lg:ml-auto text-xl font-medium p-8 gap-16 hover:text-white">
-                <a href="#projects" class="text-white transition-all hover:text-fuchsia-300">{ "projects" }</a>
-                <a href="#articles" class="text-white transition-all hover:text-indigo-200">{ "articles" }</a>
-                <a href="#contacts" class="text-white transition-all hover:text-yellow-200">{ "contacts" }</a>
+            <div class="flex flex-row lg:ml-auto text-xl font-medium p-8 gap-16">
+                <a href="#projects" class="transition-all hover:text-fuchsia-300">{ "projects" }</a>
+                <a href="#articles" class="transition-all hover:text-indigo-200">{ "articles" }</a>
+                <a href="#contacts" class="transition-all hover:text-yellow-200">{ "contacts" }</a>
             </div>
         </div>
     }
@@ -79,11 +81,26 @@ pub fn top_bar() -> Html {
 
 #[function_component(Status)]
 pub fn status() -> Html {
+    const COMMENT_STYLE: &str = "text-stone-500 font-mono inline-block";
     html! {
-        <div id="status" class="flex flex-col lg:flex-row items-center place-content-between p-4 h-screen">
-            <div class="">
-                <h1 class="text-stone-300 text-3xl font-medium"> { "Gameplay, Core systems & Tools programmer" } </h1>
+        <div id="status" class="flex flex-grow flex-col text-3xl font-medium text-left place-content-around p-4">
+            <div>
+                { "I write Engines, Systems and Tools " }
+                <span class={COMMENT_STYLE}>{ " //  mostly for games" }</span>
             </div>
+            <div>
+                { "Lately passionate about" } <br />
+                <a href="https://www.rust-lang.org/" class={format!("inline-block {}", RUST_GRADIENT)}>{ "Rust" }</a>
+                { " and " }
+                <a href="https://en.wikipedia.org/wiki/Quantum_computing" class={format!("{}", ARTICLES_GRADIENT)}>{ "Quantum computing " }</a>
+                <span class={COMMENT_STYLE}>{ " //  separately so far" }</span>
+            </div>
+            <div>
+                { "Currently not occupied " }
+                <span class={COMMENT_STYLE}>{ " //  I could be working for you" }</span>
+                <br />
+            </div>
+            <a href="#contacts" class={format!("text-center !underline decoration-solid {}", CONTACTS_GRADIENT)}>{ "hire me" }</a>
         </div>
     }
 }
@@ -111,6 +128,10 @@ pub fn contacts() -> Html {
     html! {
         <div id="contacts" class="h-96 h-screen">
             <h1 class={format!("text-6xl font-bold p-4 inline-block {}", CONTACTS_GRADIENT)}>{ "contacts" }</h1>
+            <h2 class="text-2xl">
+                <span class="contacts_gradient">{ "Telegram: " }</span>
+                <a href="https://t.me/lectromoe">{ "@lectromoe" }</a>
+            </h2>
         </div>
     }
 }
@@ -121,9 +142,11 @@ pub fn app() -> Html {
         <main class="font-['Roboto'] w-max h-max">
             <bg class="h-full w-full fixed bg-fixed bg-gradient-to-b from-black to-slate-900"> </bg>
             <content class="absolute w-full">
-                <div class="flex flex-col w-3/4 xl:w-1/2 mx-auto text-white ">
-                    <TopBar />
-                    <Status />
+                <div class="flex flex-col w-3/4 xl:w-1/2 mx-auto text-stone-200 ">
+                    <div class="flex flex-col h-screen">
+                        <TopBar />
+                        <Status />
+                    </div>
                     <Projects />
                     <Articles />
                     <Contacts />
