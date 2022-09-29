@@ -325,6 +325,7 @@ dependencies = [
  "getrandom",
  "gloo 0.8.0",
  "rand",
+ "web-sys",
  "yew",
 ]
 

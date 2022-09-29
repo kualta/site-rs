@@ -1,5 +1,6 @@
 use gloo::timers::callback::Timeout;
 use rand::prelude::*;
+use web_sys::HtmlAudioElement;
 use yew::prelude::*;
 
 const PROJECTS_GRADIENT: &str =
@@ -23,18 +24,24 @@ pub fn avatar() -> Html {
         .forget();
     }
     let onclick = {
-        let result = rand::thread_rng().gen_range(0..10);
+        let result = rand::thread_rng().gen_range(0..15);
         let animation = animation.clone();
 
         if !*is_active {
-            Callback::from(move |_| {}) 
+            Callback::from(|_| {})
         } else if result == 0 {
             Callback::from(move |_| {
+                let _ = HtmlAudioElement::new_with_src("/assets/sound/medal_click_rare.wav")
+                    .unwrap()
+                    .play();
                 is_active.set(false);
                 animation.set("flip");
             })
         } else {
             Callback::from(move |_| {
+                let _ = HtmlAudioElement::new_with_src("/assets/sound/medal_click.wav")
+                    .unwrap()
+                    .play();
                 if *animation == "shake-x" {
                     animation.set("shake-y");
                 } else {
@@ -43,8 +50,9 @@ pub fn avatar() -> Html {
             })
         }
     };
+
     html! {
-        <div class={format!("flex shrink-0 items-center rounded-full p-1 m-4 w-20 {} {}", LECTRO_GRADIENT, *animation)} {onclick}>
+        <div role="button" class={format!("flex shrink-0 items-center rounded-full p-1 m-4 w-20 {} {}", LECTRO_GRADIENT, *animation)} {onclick}>
             <img src="assets/img/ps2doggy.png" alt="doggy" class="rounded-full "/>
         </div>
     }
