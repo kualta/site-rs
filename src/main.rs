@@ -128,11 +128,27 @@ pub fn projects() -> Html {
                 odd_row_style
             };
 
+            let stack_elems = proj
+                .stack
+                .iter()
+                .map(|elem| Html::from(*elem))
+                .collect::<Html>();
+
+            let links = proj
+                .links
+                .iter()
+                .map(|link| Html::from(link.clone()))
+                .collect::<Html>();
+
             html! {
                 <tr class={row_style}>
                     <th scope="row" class={column_style}>{&proj.name}</th>
-                    <div scope="row" class={column_style}>{&proj.name}</div>
-                    // <th scope="row" class={column_style}>{&proj.status}</th>
+                    <th scope="row" class={column_style}>{Html::from(proj.status)}</th>
+                    <th scope="row" class={column_style}>{&proj.date}</th>
+                    <th scope="row" class={column_style}>{Html::from(proj.lang)}</th>
+                    <th scope="row" class={column_style}>{stack_elems}</th>
+                    <th scope="row" class={column_style}>{links}</th>
+                    <th scope="row" class={column_style}>{&proj.description}</th>
                 </tr>
             }
         })
