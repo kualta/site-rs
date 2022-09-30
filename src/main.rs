@@ -1,21 +1,15 @@
 #![allow(clippy::let_unit_value)]
 
+#[rustfmt::skip]
+mod styles;
+mod project;
+
 use gloo::timers::callback::Timeout;
+use project::*;
 use rand::prelude::*;
+use styles::*;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
-mod project;
-use project::*;
-
-const PROJECTS_GRADIENT: &str =
-    "bg-gradient-to-r from-rose-400 to-fuchsia-500 text-transparent bg-clip-text";
-const ARTICLES_GRADIENT: &str =
-    "bg-gradient-to-r from-pink-300 to-indigo-400 text-transparent bg-clip-text";
-const CONTACTS_GRADIENT: &str =
-    "bg-gradient-to-r from-green-200 via-emerald-200  to-green-300 text-transparent bg-clip-text";
-const RUST_GRADIENT: &str =
-    "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text ";
-const LECTRO_GRADIENT: &str = "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200";
 
 #[function_component(Avatar)]
 pub fn avatar() -> Html {
@@ -86,7 +80,7 @@ pub fn status() -> Html {
     html! {
         <div id="status" class="roboto-mono mono flex flex-grow flex-col text-3xl text-left place-content-center gap-8 p-4">
             <div>
-                { "> I write Engines, Systems and Tools " }
+                { "> I write Games, Engines and Tools " }
             </div>
             <div>
                 { "> Mostly in " }
@@ -103,62 +97,83 @@ pub fn status() -> Html {
 
 #[function_component(Projects)]
 pub fn projects() -> Html {
-    let projects = vec![Project {
-        name: "Fuji Bot".to_owned(),
-        description: "hardcore hypercasual game".to_owned(),
-        date: "SEP 2019".to_owned(),
-        status: StatusTag::Released,
-        lang: LangTag::Cs,
-        stack: vec![StackTag::Unity],
-        links: vec![ProjectLink::GitHub(
-            "https://github.com/lectromoe/fuji-bot".to_owned(),
-        )],
-    }];
+    let projects = vec![
+        Project {
+            name: "Fuji Bot".to_owned(),
+            description: "a hardcore hypercasual game".to_owned(),
+            date: "SEP 2019".to_owned(),
+            status: StatusTag::Complete,
+            lang: LangTag::Cs,
+            stack: vec![StackTag::Unity],
+            links: vec![
+                ProjectLink::GitHub("https://github.com/lectromoe/fuji-bot".to_owned()),
+                ProjectLink::GooglePlay(
+                    "https://play.google.com/store/apps/details?id=com.lectroMathew.FujiBot&hl=en&gl=US".to_owned(),
+                ),
+            ],
+        },
+        Project {
+            name: "Core Engine".to_owned(),
+            description: "a neat game engine".to_owned(),
+            date: "JAN 2021".to_owned(),
+            status: StatusTag::Archived,
+            lang: LangTag::Cpp,
+            stack: vec![StackTag::Core],
+            links: vec![ProjectLink::GitHub(
+                "https://github.com/lectromoe/Core".to_owned(),
+            )],
+        },
+        Project {
+            name: "Hemi Typer".to_owned(),
+            description: "an experimental typing tutor".to_owned(),
+            date: "MAR 2022".to_owned(),
+            status: StatusTag::Complete,
+            lang: LangTag::Rust,
+            stack: vec![StackTag::Wasm, StackTag::Dioxus],
+            links: vec![
+                ProjectLink::GitHub("https://github.com/lectromoe/HemiTyper".to_owned()),
+                ProjectLink::Mirror("https://lectromoe.github.io/HemiTyper/".to_owned()),
 
-    let odd_row_style = "bg-gray-900 border-gray-700";
-    let even_row_style = "bg-gray-800 border-gray-700";
-    let column_style = "py-4 px-6 font-medium whitespace-nowrap";
-    let projects: Html = projects
-        .iter()
-        .enumerate()
-        .map(|(i, proj)| {
-            let row_style = if i % 2 == 0 {
-                even_row_style
-            } else {
-                odd_row_style
-            };
+                // TODO: Update when hosted on lectro.moe
+                ProjectLink::Use("https://lectromoe.github.io/HemiTyper/".to_owned()), 
+            ],
+        },
+        Project {
+            name: "Pomodoro".to_owned(),
+            description: "a simple pomo timer".to_owned(),
+            date: "AUG 2022".to_owned(),
+            status: StatusTag::Complete,
+            lang: LangTag::Rust,
+            stack: vec![StackTag::Wasm, StackTag::Dioxus],
+            links: vec![
+                ProjectLink::GitHub("https://github.com/lectromoe/Pomodoro".to_owned()),
+                ProjectLink::Mirror("https://lectromoe.github.io/Pomodoro/".to_owned()),
 
-            let stack_elems = proj
-                .stack
-                .iter()
-                .map(|elem| Html::from(*elem))
-                .collect::<Html>();
+                // TODO: Update when hosted on lectro.moe
+                ProjectLink::Use("https://lectromoe.github.io/Pomodoro/".to_owned()), 
+            ],
+        },
+        Project {
+            name: "lectro.moe".to_owned(),
+            description: "a personal website".to_owned(),
+            date: "SEP 2022".to_owned(),
+            status: StatusTag::Complete,
+            lang: LangTag::Rust,
+            stack: vec![StackTag::Wasm, StackTag::Yew],
+            links: vec![
+                ProjectLink::GitHub("https://github.com/lectromoe/lectro.moe".to_owned()),
+                ProjectLink::Mirror("https://lectromoe.github.io/lectro.moe/".to_owned()),
+            ],
+        },
+    ];
 
-            let links = proj
-                .links
-                .iter()
-                .map(|link| Html::from(link.clone()))
-                .collect::<Html>();
-
-            html! {
-                <tr class={row_style}>
-                    <th scope="row" class={column_style}>{&proj.name}</th>
-                    <th scope="row" class={column_style}>{Html::from(proj.status)}</th>
-                    <th scope="row" class={column_style}>{&proj.date}</th>
-                    <th scope="row" class={column_style}>{Html::from(proj.lang)}</th>
-                    <th scope="row" class={column_style}>{stack_elems}</th>
-                    <th scope="row" class={column_style}>{links}</th>
-                    <th scope="row" class={column_style}>{&proj.description}</th>
-                </tr>
-            }
-        })
-        .collect();
+    let projects: Html = projects.into_iter().collect();
 
     html! {
-        <div id="projects" class="h-96 h-screen">
-            <h1 class={format!("text-6xl font-bold p-4 inline-block {}", PROJECTS_GRADIENT)}>{ "projects" }</h1>
+        <div id="projects" class="h-96 h-screen mb-52">
+            <h1 class={format!("{} {}", SECTION_TITLE, PROJECTS_GRADIENT)}>{ "Projects" }</h1>
             <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
-                <table class="w-full text-sm text-left">
+                <table class="relative w-max text-sm text-left table-fixed">
                     <tbody>
                         { projects }
                     </tbody>
@@ -171,8 +186,8 @@ pub fn projects() -> Html {
 #[function_component(Articles)]
 pub fn articles() -> Html {
     html! {
-        <div id="articles" class="h-96 h-screen">
-            <h1 class={format!("text-6xl font-bold p-4 inline-block {}", ARTICLES_GRADIENT)}>{ "articles" }</h1>
+        <div id="articles" class="h-96 h-screen mb-52">
+            <h1 class={format!("{} {}", SECTION_TITLE, ARTICLES_GRADIENT)}>{ "Articles" }</h1>
         </div>
     }
 }
@@ -181,7 +196,7 @@ pub fn articles() -> Html {
 pub fn contacts() -> Html {
     html! {
         <div id="contacts" class="h-96 h-screen">
-            <h1 class={format!("text-6xl font-bold p-4 inline-block {}", CONTACTS_GRADIENT)}>{ "contacts" }</h1>
+            <h1 class={format!("{} {}", SECTION_TITLE, CONTACTS_GRADIENT)}>{ "Contacts" }</h1>
             <h2 class="text-2xl">
                 <span class="contacts_gradient">{ "Telegram: " }</span>
                 <a href="https://t.me/lectromoe">{ "@lectromoe" }</a>
