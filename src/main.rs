@@ -2,10 +2,10 @@
 
 #[rustfmt::skip]
 mod styles;
-mod project;
+mod content;
 
+use content::*;
 use gloo::timers::callback::Timeout;
-use project::*;
 use rand::prelude::*;
 use styles::*;
 use web_sys::HtmlAudioElement;
@@ -80,7 +80,9 @@ pub fn status() -> Html {
     html! {
         <div id="status" class="roboto-mono mono flex flex-grow flex-col text-3xl text-left place-content-center gap-8 p-4">
             <div>
-                { "> I write Games, Engines and Tools " }
+                { "> I write "}
+                <a href="#projects" class={format!("inline-block {}", GAMES_GRADIENT)}>{ "Games" }</a>
+                {", Engines and Tools " }
             </div>
             <div>
                 { "> Mostly in " }
@@ -106,8 +108,8 @@ pub fn projects() -> Html {
             lang: LangTag::Cs,
             stack: vec![StackTag::Unity],
             links: vec![
-                ProjectLink::GitHub("https://github.com/lectromoe/fuji-bot".to_owned()),
-                ProjectLink::GooglePlay(
+                ContentLink::GitHub("https://github.com/lectromoe/fuji-bot".to_owned()),
+                ContentLink::GooglePlay(
                     "https://play.google.com/store/apps/details?id=com.lectroMathew.FujiBot&hl=en&gl=US".to_owned(),
                 ),
             ],
@@ -119,7 +121,7 @@ pub fn projects() -> Html {
             status: StatusTag::Archived,
             lang: LangTag::Cpp,
             stack: vec![StackTag::Core],
-            links: vec![ProjectLink::GitHub(
+            links: vec![ContentLink::GitHub(
                 "https://github.com/lectromoe/Core".to_owned(),
             )],
         },
@@ -131,11 +133,11 @@ pub fn projects() -> Html {
             lang: LangTag::Rust,
             stack: vec![StackTag::Wasm, StackTag::Dioxus],
             links: vec![
-                ProjectLink::GitHub("https://github.com/lectromoe/HemiTyper".to_owned()),
-                ProjectLink::Mirror("https://lectromoe.github.io/HemiTyper/".to_owned()),
+                ContentLink::GitHub("https://github.com/lectromoe/HemiTyper".to_owned()),
+                ContentLink::Mirror("https://lectromoe.github.io/HemiTyper/".to_owned()),
 
                 // TODO: Update when hosted on lectro.moe
-                ProjectLink::Use("https://lectromoe.github.io/HemiTyper/".to_owned()), 
+                ContentLink::Use("https://lectromoe.github.io/HemiTyper/".to_owned()), 
             ],
         },
         Project {
@@ -146,11 +148,11 @@ pub fn projects() -> Html {
             lang: LangTag::Rust,
             stack: vec![StackTag::Wasm, StackTag::Dioxus],
             links: vec![
-                ProjectLink::GitHub("https://github.com/lectromoe/Pomodoro".to_owned()),
-                ProjectLink::Mirror("https://lectromoe.github.io/Pomodoro/".to_owned()),
+                ContentLink::GitHub("https://github.com/lectromoe/Pomodoro".to_owned()),
+                ContentLink::Mirror("https://lectromoe.github.io/Pomodoro/".to_owned()),
 
                 // TODO: Update when hosted on lectro.moe
-                ProjectLink::Use("https://lectromoe.github.io/Pomodoro/".to_owned()), 
+                ContentLink::Use("https://lectromoe.github.io/Pomodoro/".to_owned()), 
             ],
         },
         Project {
@@ -161,8 +163,8 @@ pub fn projects() -> Html {
             lang: LangTag::Rust,
             stack: vec![StackTag::Wasm, StackTag::Yew],
             links: vec![
-                ProjectLink::GitHub("https://github.com/lectromoe/lectro.moe".to_owned()),
-                ProjectLink::Mirror("https://lectromoe.github.io/lectro.moe/".to_owned()),
+                ContentLink::GitHub("https://github.com/lectromoe/lectro.moe".to_owned()),
+                ContentLink::Mirror("https://lectromoe.github.io/lectro.moe/".to_owned()),
             ],
         },
     ];
@@ -170,7 +172,7 @@ pub fn projects() -> Html {
     let projects: Html = projects.into_iter().collect();
 
     html! {
-        <div id="projects" class="h-96 h-screen mb-52">
+        <div id="projects" class="mb-52">
             <h1 class={format!("{} {}", SECTION_TITLE, PROJECTS_GRADIENT)}>{ "Projects" }</h1>
             <div class="relative shadow-md sm:rounded-lg">
                 <table class="relative w-max text-sm text-left table-fixed overflow-visible ">
@@ -185,22 +187,89 @@ pub fn projects() -> Html {
 
 #[function_component(Articles)]
 pub fn articles() -> Html {
+    let articles = vec![Article {
+        name: "Fair Play: The art of online games balance".to_owned(),
+        date: "JUL 2021".to_owned(),
+        tag: ArticleTag::GameDesign,
+        links: vec![
+            ContentLink::Download(
+                "https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3"
+                    .to_owned(),
+            ),
+            ContentLink::Mirror(
+                "https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3"
+                    .to_owned(),
+            ),
+            ContentLink::Read(
+                "https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3"
+                    .to_owned(),
+            ),
+        ],
+    }];
+
+    let articles: Html = articles.into_iter().collect();
+
     html! {
-        <div id="articles" class="h-96 h-screen mb-52">
+        <div id="articles" class="mb-52">
             <h1 class={format!("{} {}", SECTION_TITLE, ARTICLES_GRADIENT)}>{ "Articles" }</h1>
+            <div class="shadow-md sm:rounded-lg">
+                <table class="w-max text-sm text-left table-fixed overflow-visible ">
+                    <tbody>
+                        { articles }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
 }
 
 #[function_component(Contacts)]
 pub fn contacts() -> Html {
+    let contacts = vec![
+        Contact {
+            name: "Telegram".to_owned(),
+            handle: "@lectromoe".to_owned(),
+            link: "https://t.me/lectromoe".to_owned(),
+            tag: ContactTag::Telegram,
+        },
+        Contact {
+            name: "GitHub".to_owned(),
+            handle: "@lectromoe".to_owned(),
+            link: "https://github.com/lectromoe".to_owned(),
+            tag: ContactTag::GitHub,
+        },
+        Contact {
+            name: "HR".to_owned(),
+            handle: "jobs@lectro.moe".to_owned(),
+            link: "mailto:jobs@lectro.moe".to_owned(),
+            tag: ContactTag::Email,
+        },
+        Contact {
+            name: "Feedback".to_owned(),
+            handle: "contact@lectro.moe".to_owned(),
+            link: "mailto:contact@lectro.moe".to_owned(),
+            tag: ContactTag::Email,
+        },
+        Contact {
+            name: "Discord".to_owned(),
+            handle: "lectromoe#6858".to_owned(),
+            link: "https://discordapp.com/users/964306690889637900".to_owned(),
+            tag: ContactTag::Discord,
+        },
+    ];
+
+    let contacts: Html = contacts.into_iter().collect();
+
     html! {
-        <div id="contacts" class="h-96 h-screen">
+        <div id="contacts" class="mb-52">
             <h1 class={format!("{} {}", SECTION_TITLE, CONTACTS_GRADIENT)}>{ "Contacts" }</h1>
-            <h2 class="text-2xl">
-                <span class="contacts_gradient">{ "Telegram: " }</span>
-                <a href="https://t.me/lectromoe">{ "@lectromoe" }</a>
-            </h2>
+            <div class="shadow-md sm:rounded-lg">
+                <table class="w-max text-sm text-left table-fixed overflow-visible ">
+                    <tbody>
+                        { contacts }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
 }
