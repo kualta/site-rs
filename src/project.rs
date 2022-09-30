@@ -34,16 +34,16 @@ impl From<Project> for Html {
             .map(|link| Html::from(link.clone()))
             .collect::<Html>();
 
-        let row_style = "border-gray-800 border-y-2 p-4";
+        let row_style = "border-gray-800 border-y-2 p-4 hidden";
         let column_style = "py-4 px-6 whitespace-nowrap";
         html! {
             <tr class={column_style}>
-                <th scope="row" class={row_style}>{Html::from(project.status)}</th>
-                <th scope="row" class={format!("{}", row_style)}>{&project.date}</th>
-                <th scope="row" class={row_style}>{&project.name}</th>
-                <th scope="row" class={row_style}>{&project.description}</th>
-                <th scope="row" class={row_style}>{Html::from(project.lang)} {stack_elems}</th>
-                <th scope="row" class={row_style}>{links}</th>
+                <th scope="row" class={format!("{} md:table-cell", row_style)}>{Html::from(project.status)}</th>
+                <th scope="row" class={format!("{} lg:table-cell", row_style)}>{&project.date}</th>
+                <th scope="row" class={format!("{} !table-cell", row_style)}>{&project.name}</th>
+                <th scope="row" class={format!("{} sm:table-cell", row_style)}>{&project.description}</th>
+                <th scope="row" class={format!("{} lg:table-cell", row_style)}>{Html::from(project.lang)} {stack_elems}</th>
+                <th scope="row" class={format!("{} !table-cell", row_style)}>{links}</th>
             </tr>
         }
     }

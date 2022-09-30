@@ -67,9 +67,9 @@ pub fn top_bar() -> Html {
                 { "lectro.moe" }
             </h3>
             <div class="flex flex-row lg:ml-auto text-xl font-medium p-8 gap-16">
-                <a href="#projects" class="transition-all hover:text-fuchsia-300">{ "projects" }</a>
-                <a href="#articles" class="transition-all hover:text-indigo-200">{ "articles" }</a>
-                <a href="#contacts" class="transition-all hover:text-green-200">{ "contacts" }</a>
+                <a href="#projects" class="transition-all hover:text-fuchsia-300"> { "projects" } </a>
+                <a href="#articles" class="transition-all hover:text-indigo-200">  { "articles" } </a>
+                <a href="#contacts" class="transition-all hover:text-green-200">   { "contacts" } </a>
             </div>
         </div>
     }
@@ -172,8 +172,8 @@ pub fn projects() -> Html {
     html! {
         <div id="projects" class="h-96 h-screen mb-52">
             <h1 class={format!("{} {}", SECTION_TITLE, PROJECTS_GRADIENT)}>{ "Projects" }</h1>
-            <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
-                <table class="relative w-max text-sm text-left table-fixed">
+            <div class="relative shadow-md sm:rounded-lg">
+                <table class="relative w-max text-sm text-left table-fixed overflow-visible ">
                     <tbody>
                         { projects }
                     </tbody>
