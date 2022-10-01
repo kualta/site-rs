@@ -11,6 +11,8 @@ use styles::*;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
 
+const PUBLIC_URL: &str = "/lectro.moe/";
+
 #[function_component(Avatar)]
 pub fn avatar() -> Html {
     let animation = use_state(|| "");
@@ -31,7 +33,8 @@ pub fn avatar() -> Html {
             Callback::from(|_| {})
         } else if result == 0 {
             Callback::from(move |_| {
-                let _ = HtmlAudioElement::new_with_src("/assets/sound/medal_click_rare.wav")
+                let path = PUBLIC_URL.to_owned() + "assets/sound/medal_click_rare.wav";
+                let _ = HtmlAudioElement::new_with_src(&path)
                     .expect("Failed to load resource")
                     .play();
                 is_active.set(false);
@@ -39,7 +42,8 @@ pub fn avatar() -> Html {
             })
         } else {
             Callback::from(move |_| {
-                let _ = HtmlAudioElement::new_with_src("/assets/sound/medal_click.wav")
+                let path = PUBLIC_URL.to_owned() + "assets/sound/medal_click.wav";
+                let _ = HtmlAudioElement::new_with_src(&path)
                     .expect("Failed to load resource")
                     .play();
                 if *animation == "shake-x" {
