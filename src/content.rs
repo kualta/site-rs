@@ -20,17 +20,17 @@ pub const RUST_GRADIENT: &str =
     "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text ";
 pub const SECTION_TITLE: &str = "text-5xl font-bold p-4 mb-8 roboto-mono inline-block";
 
-#[derive(Clone, Copy, PartialEq, Properties)]
+#[derive(Clone, PartialEq, Properties)]
 pub struct Content {
-    pub projects: Box<Vec<Project>>,
-    pub articles: Box<Vec<Article>>,
-    pub contacts: Box<Vec<Contact>>,
+    pub projects: Vec<Project>,
+    pub articles: Vec<Article>,
+    pub contacts: Vec<Contact>,
 }
 
 impl Default for Content {
     fn default() -> Self {
         Content {
-            projects:  Box::new(vec![
+            projects:  vec![
                 Project {
                     name: "Fuji Bot".to_owned(),
                     description: "a hardcore hypercasual game".to_owned(),
@@ -96,8 +96,8 @@ impl Default for Content {
                         ContentLink::Mirror("https://lectromoe.github.io/lectro.moe/".to_owned()),
                     ],
                 },
-            ]),
-            articles: Box::new(vec![
+            ],
+            articles: vec![
                 Article {
                     name: "Fair Play: The art of online games balance".to_owned(),
                     date: "JUL 2021".to_owned(),
@@ -114,8 +114,8 @@ impl Default for Content {
                         ),
                     ],
                 }
-            ]),
-            contacts: Box::new(vec![
+            ],
+            contacts: vec![
                 Contact {
                     name: "Telegram".to_owned(),
                     handle: "@lectromoe".to_owned(),
@@ -146,7 +146,7 @@ impl Default for Content {
                     link: "https://discordapp.com/users/964306690889637900".to_owned(),
                     tag: ContactTag::Discord,
                 },
-            ])
+            ]
         }
     }
 }

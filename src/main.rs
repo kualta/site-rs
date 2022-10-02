@@ -100,20 +100,18 @@ pub fn status() -> Html {
 
 #[derive(PartialEq, Properties)]
 pub struct ProjectsProps {
-    content: Content,
+    content: Html,
 }
 
 #[function_component(Projects)]
 pub fn projects(props: &ProjectsProps) -> Html {
-    let projects: Html = props.content.projects.clone().into_iter().collect();
-
     html! {
         <div id="projects" class="mb-52">
             <h1 class={format!("{} {}", SECTION_TITLE, PROJECTS_GRADIENT)}>{ "Projects" }</h1>
             <div class="shadow-md sm:rounded-lg">
                 <table class="w-max text-sm text-left table-fixed overflow-visible ">
                     <tbody>
-                        { projects }
+                        { props.content.clone() }
                     </tbody>
                 </table>
             </div>
@@ -123,20 +121,18 @@ pub fn projects(props: &ProjectsProps) -> Html {
 
 #[derive(PartialEq, Properties)]
 pub struct ArticlesProps {
-    content: Content,
+    content: Html,
 }
 
 #[function_component(Articles)]
 pub fn articles(props: &ArticlesProps) -> Html {
-    let articles: Html = props.content.articles.clone().into_iter().collect();
-
     html! {
         <div id="articles" class="mb-52">
             <h1 class={format!("{} {}", SECTION_TITLE, ARTICLES_GRADIENT)}>{ "Articles" }</h1>
             <div class="shadow-md sm:rounded-lg">
                 <table class="w-max text-sm text-left table-fixed overflow-visible ">
                     <tbody>
-                        { articles }
+                        { props.content.clone() }
                     </tbody>
                 </table>
             </div>
@@ -146,20 +142,18 @@ pub fn articles(props: &ArticlesProps) -> Html {
 
 #[derive(PartialEq, Properties)]
 pub struct ContactsProps {
-    content: Content,
+    content: Html,
 }
 
 #[function_component(Contacts)]
 pub fn contacts(props: &ContactsProps) -> Html {
-    let contacts: Html = props.content.contacts.clone().into_iter().collect();
-
     html! {
         <div id="contacts" class="mb-52">
             <h1 class={format!("{} {}", SECTION_TITLE, CONTACTS_GRADIENT)}>{ "Contacts" }</h1>
             <div class="shadow-md sm:rounded-lg">
                 <table class="w-max text-sm text-left table-fixed overflow-visible ">
                     <tbody>
-                        { contacts }
+                        { props.content.clone() }
                     </tbody>
                 </table>
             </div>
@@ -170,6 +164,9 @@ pub fn contacts(props: &ContactsProps) -> Html {
 #[function_component(App)]
 pub fn app() -> Html {
     let content = use_state(Content::default);
+    let projects: Html = content.projects.clone().into_iter().collect();
+    let articles: Html = content.articles.clone().into_iter().collect();
+    let contacts: Html = content.contacts.clone().into_iter().collect();
 
     html! {
         <main class="font-['Roboto'] w-max h-max min-w-fit">
@@ -180,9 +177,9 @@ pub fn app() -> Html {
                         <TopBar />
                         <Status />
                     </div>
-                    <Projects content={*content} />
-                    <Articles content={*content} />
-                    <Contacts content={*content} />
+                    <Projects content={projects} />
+                    <Articles content={articles} />
+                    <Contacts content={contacts} />
                 </div>
             </content>
         </main>
