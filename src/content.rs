@@ -1,10 +1,157 @@
-use yew::{html, Html};
+use std::{slice::Iter, vec::IntoIter};
+
+use yew::{html, Html, Properties};
 use yew_feather::{
     arrow_up_right::ArrowUpRight, command::Command, download::Download,
     external_link::ExternalLink, file_text::FileText, github::Github, gitlab::Gitlab, globe::Globe,
     mail::Mail, package::Package, phone::Phone, play::Play, send::Send,
 };
 
+pub const PROJECTS_GRADIENT: &str =
+    "bg-gradient-to-r from-rose-400 to-fuchsia-500 text-transparent bg-clip-text";
+pub const ARTICLES_GRADIENT: &str =
+    "bg-gradient-to-r from-pink-300 to-indigo-400 text-transparent bg-clip-text";
+pub const CONTACTS_GRADIENT: &str =
+    "bg-gradient-to-r from-green-200 via-emerald-300 to-green-300 text-transparent bg-clip-text";
+pub const LECTRO_GRADIENT: &str = "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200";
+pub const GAMES_GRADIENT: &str =
+    "bg-gradient-to-r from-fuchsia-300 via-fuchsia-300 to-pink-300 text-transparent bg-clip-text";
+pub const RUST_GRADIENT: &str =
+    "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text ";
+pub const SECTION_TITLE: &str = "text-5xl font-bold p-4 mb-8 roboto-mono inline-block";
+
+#[derive(Clone, Copy, PartialEq, Properties)]
+pub struct Content {
+    pub projects: Box<Vec<Project>>,
+    pub articles: Box<Vec<Article>>,
+    pub contacts: Box<Vec<Contact>>,
+}
+
+impl Default for Content {
+    fn default() -> Self {
+        Content {
+            projects:  Box::new(vec![
+                Project {
+                    name: "Fuji Bot".to_owned(),
+                    description: "a hardcore hypercasual game".to_owned(),
+                    date: "SEP 2019".to_owned(),
+                    status: StatusTag::Complete,
+                    lang: LangTag::Cs,
+                    stack: vec![StackTag::Unity],
+                    links: vec![
+                        ContentLink::GitHub("https://github.com/lectromoe/fuji-bot".to_owned()),
+                        ContentLink::GooglePlay("https://play.google.com/store/apps/details?id=com.lectroMathew.FujiBot&hl=en&gl=US".to_owned()),
+                     ],
+                },
+                Project {
+                    name: "Core Engine".to_owned(),
+                    description: "a neat game engine".to_owned(),
+                    date: "JAN 2021".to_owned(),
+                    status: StatusTag::Archived,
+                    lang: LangTag::Cpp,
+                    stack: vec![StackTag::Core],
+                    links: vec![ContentLink::GitHub(
+                        "https://github.com/lectromoe/Core".to_owned(),
+                    )],
+                },
+                Project {
+                    name: "Hemi Typer".to_owned(),
+                    description: "an experimental typing tutor".to_owned(),
+                    date: "MAR 2022".to_owned(),
+                    status: StatusTag::Complete,
+                    lang: LangTag::Rust,
+                    stack: vec![StackTag::Wasm, StackTag::Dioxus],
+                    links: vec![
+                        ContentLink::GitHub("https://github.com/lectromoe/HemiTyper".to_owned()),
+                        ContentLink::Mirror("https://lectromoe.github.io/HemiTyper/".to_owned()),
+
+                        // TODO: Update when hosted on lectro.moe
+                        ContentLink::Use("https://lectromoe.github.io/HemiTyper/".to_owned()), 
+                    ],
+                },
+                Project {
+                    name: "Pomodoro".to_owned(),
+                    description: "a simple pomo timer".to_owned(),
+                    date: "AUG 2022".to_owned(),
+                    status: StatusTag::Complete,
+                    lang: LangTag::Rust,
+                    stack: vec![StackTag::Wasm, StackTag::Dioxus],
+                    links: vec![
+                        ContentLink::GitHub("https://github.com/lectromoe/Pomodoro".to_owned()),
+                        ContentLink::Mirror("https://lectromoe.github.io/Pomodoro/".to_owned()),
+
+                        // TODO: Update when hosted on lectro.moe
+                        ContentLink::Use("https://lectromoe.github.io/Pomodoro/".to_owned()), 
+                    ],
+                },
+                Project {
+                    name: "lectro.moe".to_owned(),
+                    description: "a personal website".to_owned(),
+                    date: "SEP 2022".to_owned(),
+                    status: StatusTag::Complete,
+                    lang: LangTag::Rust,
+                    stack: vec![StackTag::Wasm, StackTag::Yew],
+                    links: vec![
+                        ContentLink::GitHub("https://github.com/lectromoe/lectro.moe".to_owned()),
+                        ContentLink::Mirror("https://lectromoe.github.io/lectro.moe/".to_owned()),
+                    ],
+                },
+            ]),
+            articles: Box::new(vec![
+                Article {
+                    name: "Fair Play: The art of online games balance".to_owned(),
+                    date: "JUL 2021".to_owned(),
+                    tag: ArticleTag::GameDesign,
+                    links: vec![
+                        ContentLink::Download(
+                            "https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3".to_owned(),
+                        ),
+                        ContentLink::Mirror(
+                            "https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3".to_owned(),
+                        ),
+                        ContentLink::Read(
+                            "https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3".to_owned(),
+                        ),
+                    ],
+                }
+            ]),
+            contacts: Box::new(vec![
+                Contact {
+                    name: "Telegram".to_owned(),
+                    handle: "@lectromoe".to_owned(),
+                    link: "https://t.me/lectromoe".to_owned(),
+                    tag: ContactTag::Telegram,
+                },
+                Contact {
+                    name: "GitHub".to_owned(),
+                    handle: "@lectromoe".to_owned(),
+                    link: "https://github.com/lectromoe".to_owned(),
+                    tag: ContactTag::GitHub,
+                },
+                Contact {
+                    name: "HR".to_owned(),
+                    handle: "jobs@lectro.moe".to_owned(),
+                    link: "mailto:jobs@lectro.moe".to_owned(),
+                    tag: ContactTag::Email,
+                },
+                Contact {
+                    name: "Feedback".to_owned(),
+                    handle: "contact@lectro.moe".to_owned(),
+                    link: "mailto:contact@lectro.moe".to_owned(),
+                    tag: ContactTag::Email,
+                },
+                Contact {
+                    name: "Discord".to_owned(),
+                    handle: "lectromoe#6858".to_owned(),
+                    link: "https://discordapp.com/users/964306690889637900".to_owned(),
+                    tag: ContactTag::Discord,
+                },
+            ])
+        }
+    }
+}
+
+#[derive(PartialEq, Clone)]
 pub struct Project {
     pub name: String,
     pub description: String,
@@ -52,6 +199,7 @@ impl From<Project> for Html {
     }
 }
 
+#[derive(PartialEq, Clone)]
 pub struct Article {
     pub name: String,
     pub date: String,
@@ -81,6 +229,7 @@ impl From<Article> for Html {
     }
 }
 
+#[derive(PartialEq, Properties, Clone)]
 pub struct Contact {
     pub name: String,
     pub handle: String,
@@ -98,14 +247,14 @@ impl From<Contact> for Html {
                 <th scope="row" class={format!("{}", row_style)}> {Html::from(contact.tag)} </th>
                 <th scope="row" class={format!("{} text-green-200",   row_style)}> {contact.name} </th>
                 <th scope="row" class={format!("{} roboto-mono font-medium", row_style)}>
-                    <a href={contact.link}> {contact.handle} </a>
+                    <a href={contact.link.to_owned()}> {contact.handle} </a>
                 </th>
             </tr>
         }
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum ContactTag {
     Email,
     GitHub,
@@ -131,7 +280,7 @@ impl From<ContactTag> for Html {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum ArticleTag {
     Engineering,
     GameDesign,
@@ -159,7 +308,7 @@ impl From<ArticleTag> for Html {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum LangTag {
     C,
     Cs,
@@ -185,7 +334,7 @@ impl From<LangTag> for Html {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum StatusTag {
     Archived,
     Complete,
@@ -207,7 +356,7 @@ impl From<StatusTag> for Html {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum StackTag {
     Quantum,
     Dioxus,
@@ -272,7 +421,7 @@ impl From<ContentLink> for Html {
 
         html! {
             <span class="">
-                <a href={link} class="underline"> {text} {icon} </a>
+                <a href={link.to_owned()} class="underline"> {text} {icon} </a>
             </span>
         }
     }
