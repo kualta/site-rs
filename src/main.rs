@@ -1,5 +1,6 @@
 #![allow(clippy::let_unit_value)]
-
+#![feature(custom_inner_attributes)]
+#[rustfmt::skip]
 mod content;
 
 use content::*;
@@ -63,10 +64,12 @@ pub fn avatar() -> Html {
 pub fn top_bar() -> Html {
     html! {
         <div class="flex flex-col lg:flex-row items-center place-content-start p-4">
-            <Avatar />
-            <h3 class={format!("p-8 text-transparent bg-clip-text text-3xl font-bold {}", LECTRO_GRADIENT)}>
-                { "lectro.moe" }
-            </h3>
+            <div class="flex flex-row items-center">
+                <Avatar />
+                <h3 class={format!("p-8 text-transparent bg-clip-text text-3xl font-bold {}", LECTRO_GRADIENT)}>
+                    { "lectro.moe" }
+                </h3>
+            </div>
             <div class="flex flex-row lg:ml-auto text-xl font-medium p-8 gap-16">
                 <a href="#projects" class="transition-all hover:text-fuchsia-300"> { "projects" } </a>
                 <a href="#articles" class="transition-all hover:text-indigo-200">  { "articles" } </a>
@@ -148,7 +151,7 @@ pub struct ContactsProps {
 #[function_component(Contacts)]
 pub fn contacts(props: &ContactsProps) -> Html {
     html! {
-        <div id="contacts" class="mb-52">
+        <div id="contacts" class="mb-96">
             <h1 class={format!("{} {}", SECTION_TITLE, CONTACTS_GRADIENT)}>{ "Contacts" }</h1>
             <div class="shadow-md sm:rounded-lg">
                 <table class="w-max text-sm text-left table-fixed overflow-visible ">
@@ -169,7 +172,7 @@ pub fn app() -> Html {
     let contacts: Html = content.contacts.clone().into_iter().collect();
 
     html! {
-        <main class="font-['Roboto'] w-max h-max min-w-fit">
+        <main class="roboto-mono w-max h-max min-w-fit">
             <bg class="h-full w-full fixed bg-fixed bg-gradient-to-b from-black to-slate-900"> </bg>
             <content class="absolute w-full">
                 <div class="flex flex-col w-3/4 xl:w-1/2 mx-auto text-stone-200 ">

@@ -1,26 +1,24 @@
-use std::{slice::Iter, vec::IntoIter};
-
 use yew::{html, Html, Properties};
 use yew_feather::{
-    arrow_up_right::ArrowUpRight, command::Command, download::Download,
-    external_link::ExternalLink, file_text::FileText, github::Github, gitlab::Gitlab, globe::Globe,
-    mail::Mail, package::Package, phone::Phone, play::Play, send::Send,
+    command::Command, download::Download, external_link::ExternalLink, file_text::FileText,
+    github::Github, gitlab::Gitlab, globe::Globe, mail::Mail, package::Package, phone::Phone,
+    play::Play, send::Send, twitter::Twitter,
 };
 
-pub const PROJECTS_GRADIENT: &str =
-    "bg-gradient-to-r from-rose-400 to-fuchsia-500 text-transparent bg-clip-text";
-pub const ARTICLES_GRADIENT: &str =
-    "bg-gradient-to-r from-pink-300 to-indigo-400 text-transparent bg-clip-text";
 pub const CONTACTS_GRADIENT: &str =
     "bg-gradient-to-r from-green-200 via-emerald-300 to-green-300 text-transparent bg-clip-text";
-pub const LECTRO_GRADIENT: &str = "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200";
 pub const GAMES_GRADIENT: &str =
     "bg-gradient-to-r from-fuchsia-300 via-fuchsia-300 to-pink-300 text-transparent bg-clip-text";
 pub const RUST_GRADIENT: &str =
     "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text ";
+pub const PROJECTS_GRADIENT: &str =
+    "bg-gradient-to-r from-rose-400 to-fuchsia-500 text-transparent bg-clip-text";
+pub const ARTICLES_GRADIENT: &str =
+    "bg-gradient-to-r from-pink-300 to-indigo-400 text-transparent bg-clip-text";
+pub const LECTRO_GRADIENT: &str = "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200";
 pub const SECTION_TITLE: &str = "text-5xl font-bold p-4 mb-8 roboto-mono inline-block";
 
-#[derive(Clone, PartialEq, Properties)]
+#[derive(Clone, PartialEq)]
 pub struct Content {
     pub projects: Vec<Project>,
     pub articles: Vec<Article>,
@@ -63,7 +61,6 @@ impl Default for Content {
                     stack: vec![StackTag::Wasm, StackTag::Dioxus],
                     links: vec![
                         ContentLink::GitHub("https://github.com/lectromoe/HemiTyper".to_owned()),
-                        ContentLink::Mirror("https://lectromoe.github.io/HemiTyper/".to_owned()),
 
                         // TODO: Update when hosted on lectro.moe
                         ContentLink::Use("https://lectromoe.github.io/HemiTyper/".to_owned()), 
@@ -78,7 +75,6 @@ impl Default for Content {
                     stack: vec![StackTag::Wasm, StackTag::Dioxus],
                     links: vec![
                         ContentLink::GitHub("https://github.com/lectromoe/Pomodoro".to_owned()),
-                        ContentLink::Mirror("https://lectromoe.github.io/Pomodoro/".to_owned()),
 
                         // TODO: Update when hosted on lectro.moe
                         ContentLink::Use("https://lectromoe.github.io/Pomodoro/".to_owned()), 
@@ -103,15 +99,9 @@ impl Default for Content {
                     date: "JUL 2021".to_owned(),
                     tag: ArticleTag::GameDesign,
                     links: vec![
-                        ContentLink::Download(
-                            "https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3".to_owned(),
-                        ),
-                        ContentLink::Mirror(
-                            "https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3".to_owned(),
-                        ),
-                        ContentLink::Read(
-                            "https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3".to_owned(),
-                        ),
+                        ContentLink::Download("https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3".to_owned()),
+                        ContentLink::Mirror("https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3".to_owned()),
+                        ContentLink::Read("https://lectro.medium.com/fair-play-the-art-of-online-games-balance-658a2cc39ea3".to_owned()),
                     ],
                 }
             ],
@@ -129,6 +119,12 @@ impl Default for Content {
                     tag: ContactTag::GitHub,
                 },
                 Contact {
+                    name: "Twitter".to_owned(),
+                    handle: "@lectromoe".to_owned(),
+                    link: "https://twitter.com/lectromoe".to_owned(),
+                    tag: ContactTag::Twitter,
+                },
+                Contact {
                     name: "HR".to_owned(),
                     handle: "jobs@lectro.moe".to_owned(),
                     link: "mailto:jobs@lectro.moe".to_owned(),
@@ -140,12 +136,14 @@ impl Default for Content {
                     link: "mailto:contact@lectro.moe".to_owned(),
                     tag: ContactTag::Email,
                 },
-                Contact {
-                    name: "Discord".to_owned(),
-                    handle: "lectromoe#6858".to_owned(),
-                    link: "https://discordapp.com/users/964306690889637900".to_owned(),
-                    tag: ContactTag::Discord,
-                },
+                // I have removed the discord contact from the public eye for now,
+                // but if you see this you might be special! So I left it here for you.
+                // Contact {
+                //     name: "Discord".to_owned(),
+                //     handle: "lectromoe#6858".to_owned(),
+                //     link: "https://discordapp.com/users/964306690889637900".to_owned(),
+                //     tag: ContactTag::Discord,
+                // },
             ]
         }
     }
@@ -183,14 +181,15 @@ impl From<Project> for Html {
             .map(|link| Html::from(link.clone()))
             .collect::<Html>();
 
-        let row_style = "border-gray-800 border-y-2 p-4 hidden";
+        let row_style = "border-gray-800 border-y-2 p-4 hidden font-medium";
         let column_style = "py-4 px-6 whitespace-nowrap";
         html! {
             <tr class={column_style}>
                 <th scope="row" class={format!("{} md:table-cell", row_style)}> {Html::from(project.status)} </th>
                 <th scope="row" class={format!("{} lg:table-cell", row_style)}> {&project.date}              </th>
-                <th scope="row" class={format!("{} !table-cell",   row_style)}> {&project.name}              </th>
-                <th scope="row" class={format!("{} sm:table-cell", row_style)}> {&project.description}       </th>
+                <th scope="row" class={format!("{} !table-cell !font-bold",   row_style)}> {&project.name}   </th>
+                <th scope="row" class={format!("{} sm:table-cell text-stone-400", row_style)}>
+                                                                                {&project.description}       </th>
                 <th scope="row" class={format!("{} lg:table-cell", row_style)}> {Html::from(project.lang)}
                                                                                 {stack_elems}                </th>
                 <th scope="row" class={format!("{} !table-cell",   row_style)}> {links}                      </th>
@@ -209,7 +208,7 @@ pub struct Article {
 
 impl From<Article> for Html {
     fn from(article: Article) -> Self {
-        let row_style = "border-gray-800 border-y-2 p-4 hidden";
+        let row_style = "border-gray-800 border-y-2 p-4 hidden font-medium";
         let column_style = "py-4 px-6 whitespace-nowrap";
 
         let links = article
@@ -239,14 +238,14 @@ pub struct Contact {
 
 impl From<Contact> for Html {
     fn from(contact: Contact) -> Self {
-        let row_style = "border-gray-800 border-y-2 p-4";
+        let row_style = "border-gray-800 border-y-2 p-4 font-medium";
         let column_style = "py-4 px-6 whitespace-nowrap";
 
         html! {
             <tr class={column_style}>
                 <th scope="row" class={format!("{}", row_style)}> {Html::from(contact.tag)} </th>
                 <th scope="row" class={format!("{} text-green-200",   row_style)}> {contact.name} </th>
-                <th scope="row" class={format!("{} roboto-mono font-medium", row_style)}>
+                <th scope="row" class={format!("{} roboto-mono", row_style)}>
                     <a href={contact.link.to_owned()}> {contact.handle} </a>
                 </th>
             </tr>
@@ -259,6 +258,7 @@ pub enum ContactTag {
     Email,
     GitHub,
     Telegram,
+    Twitter,
     Discord,
     Other,
 }
@@ -273,7 +273,8 @@ impl From<ContactTag> for Html {
             ContactTag::Telegram => html! {<Send         size={size} class={icon} />},
             ContactTag::Discord =>  html! {<Phone        size={size} class={icon} />},
             ContactTag::Other =>    html! {<ExternalLink size={size} class={icon} />},
-            ContactTag::GitHub =>   html! {<Github       size={size} class={icon} />}
+            ContactTag::GitHub =>   html! {<Github       size={size} class={icon} />},
+            ContactTag::Twitter =>  html! {<Twitter      size={size} class={icon} />},
         };
 
         html! { {icon} }
@@ -406,10 +407,10 @@ impl From<ContentLink> for Html {
         let icon = "inline m-1 mr-4";
         let size = "16";
         let (text, link, icon) = match tag {
-            ContentLink::Use(link)        => ("Use",         link, html! {<ArrowUpRight size={size} class={icon} />}),
+            ContentLink::Use(link)        => ("Use",         link, html! {<ExternalLink size={size} class={icon} />}),
             ContentLink::Read(link)       => ("Read",        link, html! {<FileText     size={size} class={icon} />}),
             ContentLink::Steam(link)      => ("Steam",       link, html! {<ExternalLink size={size} class={icon} />}),
-            ContentLink::GitHub(link)     => ("GitHub",      link, html! {<Github       size={size} class={icon} />}),
+            ContentLink::GitHub(link)     => ("Github",      link, html! {<Github       size={size} class={icon} />}),
             ContentLink::Mirror(link)     => ("Mirror",      link, html! {<ExternalLink size={size} class={icon} />}),
             ContentLink::GitLab(link)     => ("GitLab",      link, html! {<Gitlab       size={size} class={icon} />}),
             ContentLink::Website(link)    => ("Site",        link, html! {<Globe        size={size} class={icon} />}),
@@ -421,7 +422,7 @@ impl From<ContentLink> for Html {
 
         html! {
             <span class="">
-                <a href={link.to_owned()} class="underline"> {text} {icon} </a>
+                <a href={link.to_owned()} title={text} class="underline"> {icon} </a>
             </span>
         }
     }
