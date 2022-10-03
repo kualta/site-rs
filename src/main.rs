@@ -9,7 +9,7 @@ use rand::prelude::*;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
 
-const PUBLIC_URL: &str = "/lectro.moe/";
+const PUBLIC_URL: &str = "/";
 
 #[function_component(Avatar)]
 pub fn avatar() -> Html {
