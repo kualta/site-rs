@@ -70,7 +70,7 @@ pub fn top_bar() -> Html {
                     { "lectro.moe" }
                 </h3>
             </div>
-            <div class="flex flex-row lg:ml-auto text-xl font-medium p-8 gap-16">
+            <div class="flex sm:visible flex-row lg:ml-auto text-xl font-medium p-8 gap-8 sm:gap-16">
                 <a href="#projects" class="transition-all hover:text-fuchsia-300"> { "projects" } </a>
                 <a href="#articles" class="transition-all hover:text-indigo-200">  { "articles" } </a>
                 <a href="#contacts" class="transition-all hover:text-green-200">   { "contacts" } </a>
@@ -82,11 +82,11 @@ pub fn top_bar() -> Html {
 #[function_component(Status)]
 pub fn status() -> Html {
     html! {
-        <div id="status" class="roboto-mono mono flex flex-grow flex-col text-3xl text-left place-content-center gap-8 p-4">
+        <div id="status" class="roboto-mono mono flex flex-col text-3xl text-left place-content-center my-auto gap-8 p-4">
             <div>
                 { "> I write "}
-                <a href="#projects" class={format!("inline-block {}", GAMES_GRADIENT)}>{ "Games" }</a>
-                {", Engines and Tools " }
+                <a href="#projects" class={format!("inline-block {}", GAMES_GRADIENT)}>{ "Games, " }</a>
+                {" Engines and Tools " }
             </div>
             <div>
                 { "> Mostly in " }
@@ -109,7 +109,7 @@ pub struct ProjectsProps {
 #[function_component(Projects)]
 pub fn projects(props: &ProjectsProps) -> Html {
     html! {
-        <div id="projects" class="mb-52">
+        <div id="projects" class="mb-52 my-auto">
             <h1 class={format!("{} {}", SECTION_TITLE, PROJECTS_GRADIENT)}>{ "Projects" }</h1>
             <div class="shadow-md sm:rounded-lg">
                 <table class="w-max text-sm text-left table-fixed overflow-visible ">
@@ -132,8 +132,8 @@ pub fn articles(props: &ArticlesProps) -> Html {
     html! {
         <div id="articles" class="mb-52">
             <h1 class={format!("{} {}", SECTION_TITLE, ARTICLES_GRADIENT)}>{ "Articles" }</h1>
-            <div class="shadow-md sm:rounded-lg">
-                <table class="w-max text-sm text-left table-fixed overflow-visible ">
+            <div class="">
+                <table class="text-sm text-left table-fixed ">
                     <tbody>
                         { props.content.clone() }
                     </tbody>
@@ -175,8 +175,8 @@ pub fn app() -> Html {
         <main class="roboto-mono w-max h-max min-w-fit">
             <bg class="h-full w-full fixed bg-fixed bg-gradient-to-b from-black to-slate-900"> </bg>
             <content class="absolute w-full">
-                <div class="flex flex-col w-3/4 xl:w-1/2 mx-auto text-stone-200 ">
-                    <div class="flex flex-col h-screen">
+                <div class="flex flex-col w-3/4 xl:w-1/2 mx-auto text-stone-200">
+                    <div class="flex flex-col min-h-screen">
                         <TopBar />
                         <Status />
                     </div>

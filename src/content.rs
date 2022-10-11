@@ -8,7 +8,7 @@ use yew_feather::{
 pub const CONTACTS_GRADIENT: &str =
     "bg-gradient-to-r from-green-200 via-emerald-300 to-green-300 text-transparent bg-clip-text";
 pub const GAMES_GRADIENT: &str =
-    "bg-gradient-to-r from-fuchsia-300 via-fuchsia-300 to-pink-300 text-transparent bg-clip-text";
+    "bg-gradient-to-r from-fuchsia-300 via-fuchsia-300 to-pink-100 text-transparent bg-clip-text";
 pub const RUST_GRADIENT: &str =
     "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text ";
 pub const PROJECTS_GRADIENT: &str =
@@ -18,7 +18,7 @@ pub const ARTICLES_GRADIENT: &str =
 pub const LECTRO_GRADIENT: &str = "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200";
 pub const SECTION_TITLE: &str = "text-5xl font-bold p-4 mb-8 roboto-mono inline-block";
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct Content {
     pub projects: Vec<Project>,
     pub articles: Vec<Article>,
@@ -149,7 +149,7 @@ impl Default for Content {
     }
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct Project {
     pub name: String,
     pub description: String,
@@ -198,7 +198,7 @@ impl From<Project> for Html {
     }
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct Article {
     pub name: String,
     pub date: String,
@@ -209,7 +209,7 @@ pub struct Article {
 impl From<Article> for Html {
     fn from(article: Article) -> Self {
         let row_style = "border-gray-800 border-y-2 p-4 hidden font-medium";
-        let column_style = "py-4 px-6 whitespace-nowrap";
+        let column_style = "py-4 px-6";
 
         let links = article
             .links
@@ -222,13 +222,17 @@ impl From<Article> for Html {
                 <th scope="row" class={format!("{} md:table-cell", row_style)}> {Html::from(article.tag)} </th>
                 <th scope="row" class={format!("{} lg:table-cell", row_style)}> {article.date}            </th>
                 <th scope="row" class={format!("{} !table-cell",   row_style)}> {article.name}            </th>
-                <th scope="row" class={format!("{} !table-cell",   row_style)}> {links}                   </th>
+                <th scope="row" class={format!("{} !table-cell",   row_style)}>
+                    <div class="flex flex-col sm:flex-row flex-nowrap">
+                        {links}
+                    </div>
+                </th>
             </tr>
         }
     }
 }
 
-#[derive(PartialEq, Properties, Clone)]
+#[derive(Properties, Clone, PartialEq, Eq)]
 pub struct Contact {
     pub name: String,
     pub handle: String,
@@ -238,14 +242,14 @@ pub struct Contact {
 
 impl From<Contact> for Html {
     fn from(contact: Contact) -> Self {
-        let row_style = "border-gray-800 border-y-2 p-4 font-medium";
+        let row_style = "border-gray-800 border-y-2 p-4 font-medium hidden";
         let column_style = "py-4 px-6 whitespace-nowrap";
 
         html! {
             <tr class={column_style}>
-                <th scope="row" class={format!("{}", row_style)}> {Html::from(contact.tag)} </th>
-                <th scope="row" class={format!("{} text-green-200",   row_style)}> {contact.name} </th>
-                <th scope="row" class={format!("{} roboto-mono", row_style)}>
+                <th scope="row" class={format!("{} sm:table-cell", row_style)}> {Html::from(contact.tag)} </th>
+                <th scope="row" class={format!("{} !table-cell text-green-200",   row_style)}> {contact.name} </th>
+                <th scope="row" class={format!("{} !table-cell roboto-mono", row_style)}>
                     <a href={contact.link.to_owned()}> {contact.handle} </a>
                 </th>
             </tr>
@@ -253,7 +257,7 @@ impl From<Contact> for Html {
     }
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum ContactTag {
     Email,
     GitHub,
@@ -281,7 +285,7 @@ impl From<ContactTag> for Html {
     }
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum ArticleTag {
     Engineering,
     GameDesign,
@@ -309,7 +313,7 @@ impl From<ArticleTag> for Html {
     }
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum LangTag {
     C,
     Cs,
@@ -335,7 +339,7 @@ impl From<LangTag> for Html {
     }
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum StatusTag {
     Archived,
     Complete,
@@ -357,7 +361,7 @@ impl From<StatusTag> for Html {
     }
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum StackTag {
     Quantum,
     Dioxus,
