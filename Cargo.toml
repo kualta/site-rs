@@ -10,3 +10,4 @@ gloo = "0.8.0"
 rand = "0.8.5"
 yew = "0.19.3"
 yew-feather = "0.2.1"
+yew-router = { git = "https://github.com/yewstack/yew.git" } 

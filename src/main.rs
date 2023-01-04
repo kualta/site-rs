@@ -1,5 +1,4 @@
 #![allow(clippy::let_unit_value)]
-#![feature(custom_inner_attributes)]
 #[rustfmt::skip]
 mod content;
 
@@ -8,6 +7,7 @@ use gloo::timers::callback::Timeout;
 use rand::prelude::*;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
+use yew_router::prelude::*;
 
 const PUBLIC_URL: &str = "/";
 
@@ -84,9 +84,7 @@ pub fn status() -> Html {
     html! {
         <div id="status" class="roboto-mono mono flex flex-col text-3xl text-left place-content-center my-auto gap-8 p-4">
             <div>
-                { "> I write "}
-                <a href="#projects" class={format!("inline-block {}", GAMES_GRADIENT)}>{ "Games, " }</a>
-                {" Engines and Tools " }
+                <a href="#projects" class={format!("inline-block {}", GAMES_GRADIENT)}>{ "> Software Engineer" }</a>
             </div>
             <div>
                 { "> Mostly in " }
@@ -166,27 +164,51 @@ pub fn contacts(props: &ContactsProps) -> Html {
 
 #[function_component(App)]
 pub fn app() -> Html {
+    // html! {
+    //     <main class="roboto-mono w-max h-max min-w-fit">
+    //         <bg class="h-full w-full fixed bg-fixed bg-[#101112]"> </bg>
+    //         <div class="absolute w-full">
+    //             <div class="flex flex-col w-3/4 xl:w-1/2 mx-auto text-stone-200">
+    //                 <main class="flex flex-col">
+    //                     <TopBar />
+    //                     <Status />
+    //                 </main>
+    //                 <Projects content={projects} />
+    //                 <Articles content={articles} />
+    //                 <Contacts content={contacts} />
+    //             </div>
+    //         </div>
+    //     </main>
+    // }
+
+    html! {
+        <BrowserRouter>
+            <Switch<Route> render={switch} />
+        </BrowserRouter>
+    }
+}
+
+fn switch(routes: Route) -> Html {
     let content = use_state(Content::default);
     let projects: Html = content.projects.clone().into_iter().collect();
     let articles: Html = content.articles.clone().into_iter().collect();
     let contacts: Html = content.contacts.clone().into_iter().collect();
 
-    html! {
-        <main class="roboto-mono w-max h-max min-w-fit">
-            <bg class="h-full w-full fixed bg-fixed bg-gradient-to-b from-black to-slate-900"> </bg>
-            <content class="absolute w-full">
-                <div class="flex flex-col w-3/4 xl:w-1/2 mx-auto text-stone-200">
-                    <div class="flex flex-col min-h-screen">
-                        <TopBar />
-                        <Status />
-                    </div>
-                    <Projects content={projects} />
-                    <Articles content={articles} />
-                    <Contacts content={contacts} />
-                </div>
-            </content>
-        </main>
+    match routes {
+        Route::Home => html! { Contacts content={contacts} },
+        Route::Projects => html! { <Projects content={projects}/> },
+        Route::Articles => html! { <Articles content={articles}/> },
     }
+}
+
+#[derive(Clone, Routable, PartialEq)]
+enum Route {
+    #[at("/")]
+    Home,
+    #[at("/projects")]
+    Projects,
+    #[at("/articles")]
+    Articles,
 }
 
 fn main() {
