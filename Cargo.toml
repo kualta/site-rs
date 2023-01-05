@@ -1,6 +1,6 @@
 [package]
-name = "lectro-moe"
-version = "2.0.0"
+name = "site"
+version = "3.0.0"
 edition = "2021"
 
 [dependencies]
@@ -8,6 +8,5 @@ web-sys = { version = "0.3.59", features = ["HtmlAudioElement"] }
 getrandom = { version = "0.2.7", features = ["js"] }
 gloo = "0.8.0"
 rand = "0.8.5"
-yew = "0.19.3"
-yew-feather = "0.2.1"
-yew-router = { git = "https://github.com/yewstack/yew.git" } 
+dioxus = "0.3.1"
+
