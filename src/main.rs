@@ -13,11 +13,50 @@ fn main() {
 fn App(cx: Scope) -> Element {
     cx.render(rsx! {
         Background { }
-        Avatar { }
-        Router {
-            Route { to: "/", Home {} }
-            Route { to: "/projects", Projects {} }
-            Route { to: "/articles", Articles {} }
+        main {
+            class: "roboto-mono flex flex-col w-full md:w-3/4 xl:w-1/2 mx-auto text-stone-200",
+            Router {
+                Route { to: "/", Home {} }
+                Route { to: "/projects", Projects {} }
+                Route { to: "/articles", Articles {} }
+            }
+        }
+    })
+}
+
+fn TopBar(cx: Scope) -> Element {
+    let title_class = use_state(cx, || {
+        format!(
+            "p-8 text-transparent bg-clip-text text-3xl font-bold {}",
+            LECTRO_GRADIENT
+        )
+    });
+    let title = rsx! { h3 { class: title_class.as_str(), "lectro.moe"}};
+    let router = use_route(cx);
+    let url = router.last_segment()?;
+
+    let bar = match url {
+        "" => rsx! {
+                div {
+                    class: "flex w-full flex-row place-items-center place-content-around w-full",
+                    Link { to: "/projects", "projects" }
+                    Link { to: "/articles", "articles" }
+                    Link { to: "/contacts", "contacts" }
+                }
+        },
+        _ => rsx! {
+                div {
+                    class: "flex w-full flex-row place-items-center place-content-around w-full",
+                    Link { to: "/", "< back" }
+                }
+        },
+    };
+
+    cx.render(rsx! {
+        div {
+            class: "flex flex-col items-center",
+            Link { to: "/", title }
+            bar
         }
     })
 }
@@ -25,6 +64,7 @@ fn App(cx: Scope) -> Element {
 fn Home(cx: Scope) -> Element {
     cx.render(rsx! {
         div {
+            TopBar { }
             { " hi "}
         }
     })
@@ -33,6 +73,7 @@ fn Home(cx: Scope) -> Element {
 fn Projects(cx: Scope) -> Element {
     cx.render(rsx! {
         div {
+            TopBar { }
             { " proj "}
         }
     })
@@ -41,6 +82,7 @@ fn Projects(cx: Scope) -> Element {
 fn Articles(cx: Scope) -> Element {
     cx.render(rsx! {
         div {
+            TopBar { }
             { " article "}
         }
     })
@@ -69,7 +111,7 @@ fn Avatar(cx: Scope) -> Element {
 fn Background(cx: Scope) -> Element {
     cx.render(rsx! {
         div {
-
+            class: "absolute inset-0 -z-10 h-full w-full bg-[#101112]"
         }
     })
 }
