@@ -5,11 +5,11 @@ use serde::{Deserialize, Serialize};
 pub struct Project {
     pub name: String,
     pub date: String,
-    pub stack: String,
-    pub description: String,
+    pub stack: Stack,
     pub status: Status,
+    pub description: String,
     pub language: Language,
-    pub links: Vec<(String, String)>,
+    pub links: Vec<Link>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -38,43 +38,11 @@ pub enum ContactTag {
     Other,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Stack {
-    Quantum,
-    Dioxus,
-    Unity,
-    Reactjs,
-    Nextjs,
-    Core,
-    Bevy,
-    Wasm,
-    Wasi,
-    Yew,
-}
-impl From<&Stack> for LazyNodes<'_, '_> {
-    fn from(stack: &Stack) -> Self {
-        let class = "";
-        match stack {
-            Stack::Quantum => rsx! { p { class: class, "Quantum"}},
-            Stack::Dioxus => rsx! { p { class: class, "Dioxus"}},
-            Stack::Unity => rsx! { p { class: class, "Unity"}},
-            Stack::Core => rsx! { p { class: class, "Core"}},
-            Stack::Bevy => rsx! { p { class: class, "Bevy"}},
-            Stack::Wasm => rsx! { p { class: class, "WASM"}},
-            Stack::Wasi => rsx! { p { class: class, "WASI"}},
-            Stack::Yew => rsx! { p { class: class, "Yew"}},
-            Stack::Reactjs => rsx! { p { class: class, "ReactJS"}},
-            Stack::Nextjs => rsx! { p { class: class, "NextJS"}},
-        }
-    }
-}
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct Stack(pub String);
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
-pub enum Link {
-    Use(String),
-    Read(String),
-    GitHub(String),
-}
+pub struct Link(pub String, pub String);
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ArticleTag {

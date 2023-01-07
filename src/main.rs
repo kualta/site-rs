@@ -2,12 +2,9 @@
 
 mod content;
 
-use std::convert::From;
-
-use content::*;
+use content::{Article, Contact, Project};
 use dioxus::prelude::*;
 use dioxus_router::*;
-use gloo::console::log;
 use serde::de::DeserializeOwned;
 
 pub const PUBLIC_URL: &str = "/";
@@ -122,13 +119,10 @@ fn Projects(cx: Scope) -> Element {
                         td { project.name.as_str() }
                         td { project.description.as_str() }
                         td { format!("{:?}", project.language) }
-                        td { project.stack.iter().map(LazyNodes::from) }
-                        td { project.links.iter().map(|link| match link {
-                                Link::Use(link) => rsx! { a { href: link.as_str(), "use"} },
-                                Link::Read(link) => rsx! { a { href: link.as_str(), "read"} },
-                                Link::GitHub(link) => rsx! { a { href: link.as_str(), "github"} },
-                            }
-                        )}
+                        td { project.stack.0.as_str() }
+                        td { project.links.iter().map(|link| rsx! {
+                            a { href: link.1.as_str(), link.0.as_str()}})
+                        }
                     })
                 }
             },
