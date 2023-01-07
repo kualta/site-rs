@@ -1,12 +1,13 @@
 #![allow(non_snake_case)]
 
-use std::collections::HashMap;
-
 mod content;
+
+use std::convert::From;
 
 use content::*;
 use dioxus::prelude::*;
 use dioxus_router::*;
+use serde::de::DeserializeOwned;
 
 pub const PUBLIC_URL: &str = "/";
 pub const LECTRO_GRADIENT: &str =
@@ -86,18 +87,29 @@ fn Home(cx: Scope) -> Element {
     })
 }
 
+async fn fetch_data<T>(url: &str) -> Result<T, reqwest::Error>
+where
+    T: DeserializeOwned,
+{
+    let data: T = reqwest::get(url).await?.json::<T>().await?;
+    Ok(data)
+}
+
 fn Projects(cx: Scope) -> Element {
     let projects = use_state(cx, || None);
     let url = "https://raw.githubusercontent.com/lectromoe/Data/master/projects.json";
 
     cx.spawn({
         to_owned![projects];
-        async move {
-            let data: Vec<Project> = reqwest::get(url).await.unwrap().json().await.unwrap();
 
-            projects.set(Some(data));
+        async move {
+            match fetch_data::<Vec<Project>>(url).await {
+                Ok(data) => projects.set(Some(data)),
+                Err(_) => projects.set(None),
+            };
         }
     });
+
     let name = format!("{:?}", projects);
 
     cx.render(rsx! {
