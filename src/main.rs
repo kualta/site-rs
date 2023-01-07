@@ -7,6 +7,7 @@ use std::convert::From;
 use content::*;
 use dioxus::prelude::*;
 use dioxus_router::*;
+use gloo::console::log;
 use serde::de::DeserializeOwned;
 
 pub const PUBLIC_URL: &str = "/";
@@ -16,6 +17,7 @@ pub const RUST_GRADIENT: &str =
     "inline-block bg-gradient-to-r from-red-300 via-red-200  to-yellow-100 text-transparent bg-clip-text";
 
 fn main() {
+    wasm_logger::init(wasm_logger::Config::default());
     dioxus_web::launch(App);
 }
 
@@ -96,25 +98,45 @@ where
 }
 
 fn Projects(cx: Scope) -> Element {
-    let projects = use_state(cx, || None);
     let url = "https://raw.githubusercontent.com/lectromoe/Data/master/projects.json";
 
-    cx.spawn({
-        to_owned![projects];
-
-        async move {
-            match fetch_data::<Vec<Project>>(url).await {
-                Ok(data) => projects.set(Some(data)),
-                Err(_) => projects.set(None),
-            };
+    let projects = use_future(cx, (), |_| async move {
+        match fetch_data::<Vec<Project>>(url).await {
+            Ok(projects) => projects,
+            Err(err) => {
+                log::error!("{:?}", err);
+                vec![]
+            }
         }
     });
 
-    let name = format!("{:?}", projects);
+    let response = format!("{:?}", projects.value());
 
     cx.render(rsx! {
         TopBar { }
-        p { name }
+        match projects.value() {
+            Some(project) => rsx! {
+                table { class: "text-base",
+                    project.iter().map(|project| rsx! {
+                        td { format!("{:?}", project.status) }
+                        td { project.name.as_str() }
+                        td { project.description.as_str() }
+                        td { format!("{:?}", project.language) }
+                        td { project.stack.iter().map(LazyNodes::from) }
+                        td { project.links.iter().map(|link| match link {
+                                Link::Use(link) => rsx! { a { href: link.as_str(), "use"} },
+                                Link::Read(link) => rsx! { a { href: link.as_str(), "read"} },
+                                Link::GitHub(link) => rsx! { a { href: link.as_str(), "github"} },
+                            }
+                        )}
+                    })
+                }
+            },
+            None => rsx! {
+                "Loading projects..."
+                p { response }
+            }
+        }
     })
 }
 
