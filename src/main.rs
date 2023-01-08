@@ -115,20 +115,25 @@ fn Projects(cx: Scope) -> Element {
             Some(project) => rsx! {
                 table { class: "text-base",
                     project.iter().map(|project| rsx! {
-                        td { format!("{:?}", project.status) }
-                        td { project.name.as_str() }
-                        td { project.description.as_str() }
-                        td { format!("{:?}", project.language) }
-                        td { project.stack.0.as_str() }
-                        td { project.links.iter().map(|link| rsx! {
-                            a { href: link.1.as_str(), link.0.as_str()}})
+                        tr { class: "border-gray-700 border-y-2 font-medium text-left",
+                            td { class: "text-center", project.status.as_str() }
+                            td { class: "font-bold text-center", project.name.as_str() }
+                            td { class: "", project.description.as_str() }
+                            td { class: "", project.language.as_str() }
+                            td { class: "", project.stack.as_str() }
+                            td { class: "", project.links.iter().map(|link| rsx! {
+                                a { class: "underline", href: link.1.as_str(), link.0.as_str()}})
+                            }
                         }
                     })
                 }
             },
             None => rsx! {
-                "Loading projects..."
-                p { response }
+                div { class: "mx-auto",
+                    div {
+                        p { "Loading projects..." }
+                    }
+                }
             }
         }
     })
