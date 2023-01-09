@@ -21,10 +21,10 @@ fn main() {
 fn App(cx: Scope) -> Element {
     cx.render(rsx! {
         Background { }
-        main { class: "roboto-mono flex flex-col w-max h-screen sm:w-3/4 xl:w-1/2 mx-auto text-xl text-stone-200",
+        main { class: "flex flex-col w-max h-screen sm:w-3/4 xl:w-1/2 mx-auto text-xl text-stone-200",
             Router {
                 Route { to: "/", Home {} }
-                Route { to: "/projects", Projects {} }
+                Route { to: "/content", Content {} }
                 Route { to: "/articles", Articles {} }
                 Route { to: "/contacts", Contacts {} }
             }
@@ -45,22 +45,30 @@ fn TopBar(cx: Scope) -> Element {
     let url = router.last_segment()?;
     let links = match url {
         "" => rsx! {
-            Link { to: "/projects", "projects" }
-            Link { to: "/articles", "articles" }
-            Link { to: "/contacts", "contacts" }
+            Link { class: "basis-1/3", to: "/content", "content" }
+            Link { class: "basis-1/3", to: "/", title }
+            Link { class: "basis-1/3", to: "/contacts", "contacts" }
+        },
+        "content" => rsx! {
+            Link { class: "basis-1/3", to: "/", "< back" }
+            Link { class: "basis-1/3", to: "/", title }
+            Link { class: "basis-1/3", to: "/contacts", "contacts" }
+        },
+        "contacts" => rsx! {
+            Link { class: "basis-1/3", to: "/", "< back" }
+            Link { class: "basis-1/3", to: "/", title }
+            Link { class: "basis-1/3", to: "/content", "content" }
         },
         _ => rsx! {
-            Link { to: "/", "< back" }
+            Link { class: "basis-1/3", to: "/", "< back" }
+            Link { class: "basis-1/3", to: "/", title }
+            Link { class: "basis-1/3", to: "/contacts", "contacts" }
         },
     };
 
     cx.render(rsx! {
-        div {
-            class: "flex flex-col items-center",
-            Link { to: "/", title }
-            div { class: "flex flex-row text-lg place-items-center place-content-around w-full",
-                links
-            }
+        div { class: "flex flex-row text-xl place-items-baseline place-content-center text-center w-full",
+            links
         }
     })
 }
@@ -68,7 +76,7 @@ fn TopBar(cx: Scope) -> Element {
 fn Home(cx: Scope) -> Element {
     cx.render(rsx! {
         TopBar { }
-        div { class: "flex flex-col items-center place-content-evenly lg:flex-row h-full",
+        div { class: "roboto-mono flex flex-col items-center place-content-evenly lg:flex-row h-full",
             div { class: "flex flex-col items-left place-content-around h-24",
                 h3 { " > Software engineer" }
                 span { class: "flex flex-row",
@@ -94,7 +102,7 @@ where
     Ok(data)
 }
 
-fn Projects(cx: Scope) -> Element {
+fn Content(cx: Scope) -> Element {
     let url = "https://raw.githubusercontent.com/lectromoe/Data/master/projects.json";
 
     let projects = use_future(cx, (), |_| async move {
@@ -107,22 +115,26 @@ fn Projects(cx: Scope) -> Element {
         }
     });
 
-    let response = format!("{:?}", projects.value());
-
     cx.render(rsx! {
         TopBar { }
         match projects.value() {
             Some(project) => rsx! {
-                table { class: "text-base",
+                table { class: "absolute inset-0 mx-auto mt-32 table-auto w-full lg:w-5/6 xl:w-2/3 text-base",
+                    tr { class: "text-left",
+                        th { class: "text-center", "name" }
+                        th { class: "", "description" }
+                        th { class: "text-center", "language" }
+                        th { class: "", "stack" }
+                        th { class: "", "links" }
+                    }
                     project.iter().map(|project| rsx! {
-                        tr { class: "border-gray-700 border-y-2 font-medium text-left",
-                            td { class: "text-center", project.status.as_str() }
+                        tr { class: "border-neutral-700 border-y-2 font-medium text-left",
                             td { class: "font-bold text-center", project.name.as_str() }
                             td { class: "", project.description.as_str() }
-                            td { class: "", project.language.as_str() }
-                            td { class: "", project.stack.as_str() }
+                            td { class: "text-center", project.language.as_str() }
+                            td { class: "py-4", project.stack.as_str() }
                             td { class: "", project.links.iter().map(|link| rsx! {
-                                a { class: "underline", href: link.1.as_str(), link.0.as_str()}})
+                                a { class: "underline pr-2", href: link.1.as_str(), link.0.as_str()}})
                             }
                         }
                     })
@@ -131,7 +143,7 @@ fn Projects(cx: Scope) -> Element {
             None => rsx! {
                 div { class: "mx-auto",
                     div {
-                        p { "Loading projects..." }
+                        p { "No content... Too bad!" }
                     }
                 }
             }
