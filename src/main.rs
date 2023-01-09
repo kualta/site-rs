@@ -24,7 +24,7 @@ fn App(cx: Scope) -> Element {
     let articles_url = "https://raw.githubusercontent.com/lectromoe/Data/master/articles.json";
 
     // TODO
-    let contacts: &UseFuture<Vec<Contact>> = use_future(cx, (), |_| async move {
+    let contacts = use_future(cx, (), |_| async move {
         match fetch_data::<Vec<Contact>>(contacts_url).await {
             Ok(contacts) => contacts,
             Err(err) => {
