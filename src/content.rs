@@ -1,4 +1,3 @@
-use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -25,5 +24,4 @@ pub struct Contact {
     pub name: String,
     pub handle: String,
     pub link: String,
-    pub tag: String,
 }

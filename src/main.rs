@@ -24,7 +24,6 @@ fn App(cx: Scope) -> Element {
             Router {
                 Route { to: "/", Home {} }
                 Route { to: "/content", Content {} }
-                Route { to: "/articles", Articles {} }
                 Route { to: "/contacts", Contacts {} }
             }
         }
@@ -129,18 +128,18 @@ fn Content(cx: Scope) -> Element {
             Some(project) => rsx! {
                 table { class: "relative table-auto w-full",
                     tr { class: "text-left",
-                        th { class: "px-4 w-24 sm:w-48",    "name" }
-                        th { class: "",             "description" }
-                        th { class: "text-center",  "language" }
-                        th { class: "",             "stack" }
-                        th { class: "",   "links" }
+                        th { class: "px-4 w-24 sm:w-48", "name" }
+                        th { class: "",                  "description" }
+                        th { class: "text-center",       "language" }
+                        th { class: "",                  "stack" }
+                        th { class: "",                  "links" }
                     }
                     project.iter().map(|project| rsx! {
                         tr { class: "border-neutral-700 border-y-2 text-left",
-                            td { class: "font-bold px-4", project.name.as_str() }
+                            td { class: "font-bold px-4",        project.name.as_str() }
                             td { class: "",                      project.description.as_str() }
                             td { class: "text-center",           project.language.as_str() }
-                            td { class: "py-4",                  project.stack.as_str() }
+                            td { class: "py-2",                  project.stack.as_str() }
                             td { class: "", project.links.iter().map(|link| rsx! {
                                 a { class: "underline pr-2", href: link.1.as_str(), link.0.as_str()}})
                             }
@@ -171,7 +170,7 @@ fn Content(cx: Scope) -> Element {
                         tr { class: "border-neutral-700 border-y-2 text-left",
                             td { class: "font-bold px-4", article.name.as_str() }
                             td { class: "",                      article.description.as_str() }
-                            td { class: "py-4 text-center",                  article.theme.as_str() }
+                            td { class: "py-2 text-center",                  article.theme.as_str() }
                             td { class: "", article.links.iter().map(|link| rsx! {
                                 a { class: "underline pr-2", href: link.1.as_str(), link.0.as_str()}})
                             }
@@ -182,7 +181,7 @@ fn Content(cx: Scope) -> Element {
             None => rsx! {
                 div { class: "mx-auto",
                     div {
-                        p { "No articles... Something went wrong!" }
+                        p { "Failed to load... Maybe it's a blessing in disguise?" }
                     }
                 }
             }
@@ -204,16 +203,49 @@ fn Content(cx: Scope) -> Element {
     })
 }
 
-fn Articles(cx: Scope) -> Element {
-    cx.render(rsx! {
-        TopBar { }
-        " article "
-    })
-}
-
 fn Contacts(cx: Scope) -> Element {
+    let contacts_url = "https://raw.githubusercontent.com/lectromoe/Data/master/contacts.json";
+
+    let contacts = use_future(cx, (), |_| async move {
+        match fetch_data::<Vec<Contact>>(contacts_url).await {
+            Ok(contacts) => contacts,
+            Err(err) => {
+                log::error!("{:?}", err);
+                vec![]
+            }
+        }
+    });
+    let contacts = rsx! {
+        match contacts.value() {
+            Some(contacts) => rsx! {
+                table { class: "table-auto mx-auto m-8",
+                    contacts.iter().map(|contact| rsx! {
+                        tr { class: "border-neutral-700 border-y-2",
+                            td { class: "px-8 py-2 text-right", contact.name.as_str() }
+                            td { a { class: "pr-8 underline roboto-mono text-left",
+                                href: contact.link.as_str(),
+                                contact.handle.as_str()
+                            }}
+                        }
+                    })
+                }
+            },
+            None => rsx! {
+                div { class: "mx-auto",
+                    div {
+                        p { "Loading most up-to-date data..." }
+                    }
+                }
+            }
+        }
+    };
+
     cx.render(rsx! {
         TopBar { }
-        "contacts"
+        div { class: "my-auto text-center my-auto",
+            h1 { class: "font-bold text-4xl text-neutral-800 sm:text-6xl", "Contacts" }
+            contacts
+            p { class: "text-neutral-600", "feel free to contact me for any reason" }
+        }
     })
 }
