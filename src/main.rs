@@ -19,12 +19,45 @@ fn main() {
 }
 
 fn App(cx: Scope) -> Element {
+    let contacts_url = "https://raw.githubusercontent.com/lectromoe/Data/master/contacts.json";
+    let projects_url = "https://raw.githubusercontent.com/lectromoe/Data/master/projects.json";
+    let articles_url = "https://raw.githubusercontent.com/lectromoe/Data/master/articles.json";
+
+    // TODO
+    let contacts: &UseFuture<Vec<Contact>> = use_future(cx, (), |_| async move {
+        match fetch_data::<Vec<Contact>>(contacts_url).await {
+            Ok(contacts) => contacts,
+            Err(err) => {
+                log::error!("{:?}", err);
+                vec![]
+            }
+        }
+    });
+    let projects = use_future(cx, (), |_| async move {
+        match fetch_data::<Vec<Project>>(projects_url).await {
+            Ok(projects) => projects,
+            Err(err) => {
+                log::error!("{:?}", err);
+                vec![]
+            }
+        }
+    });
+    let articles = use_future(cx, (), |_| async move {
+        match fetch_data::<Vec<Article>>(articles_url).await {
+            Ok(articles) => articles,
+            Err(err) => {
+                log::error!("{:?}", err);
+                vec![]
+            }
+        }
+    });
+
     cx.render(rsx! {
         main { class: "flex flex-col w-screen h-screen lg:w-5/6 xl:w-2/3 mx-auto text-xl text-stone-200",
             Router {
                 Route { to: "/", Home {} }
-                Route { to: "/content", Content {} }
-                Route { to: "/contacts", Contacts {} }
+                Route { to: "/content", Content {projects: projects, articles: articles} }
+                Route { to: "/contacts", Contacts {contacts: contacts} }
             }
         }
     })
@@ -100,29 +133,12 @@ where
     Ok(data)
 }
 
-fn Content(cx: Scope) -> Element {
-    let projects_url = "https://raw.githubusercontent.com/lectromoe/Data/master/projects.json";
-    let articles_url = "https://raw.githubusercontent.com/lectromoe/Data/master/articles.json";
-
-    let projects = use_future(cx, (), |_| async move {
-        match fetch_data::<Vec<Project>>(projects_url).await {
-            Ok(projects) => projects,
-            Err(err) => {
-                log::error!("{:?}", err);
-                vec![]
-            }
-        }
-    });
-    let articles = use_future(cx, (), |_| async move {
-        match fetch_data::<Vec<Article>>(articles_url).await {
-            Ok(articles) => articles,
-            Err(err) => {
-                log::error!("{:?}", err);
-                vec![]
-            }
-        }
-    });
-
+#[inline_props]
+fn Content<'a>(
+    cx: Scope<'a>,
+    projects: &'a UseFuture<Vec<Project>>,
+    articles: &'a UseFuture<Vec<Article>>,
+) -> Element<'a> {
     let projects = rsx! {
         match projects.value() {
             Some(project) => rsx! {
@@ -190,12 +206,12 @@ fn Content(cx: Scope) -> Element {
 
     cx.render(rsx! {
         TopBar { }
-        div { class: "flex flex-col place-items-center text-xs sm:text-sm md:text-base",
-            div { class: "roboto-mono text-left w-full mt-4",
+        div { class: "flex roboto-mono text-center flex-col place-items-center text-xs sm:text-sm md:text-base",
+            div { class: "w-full mt-16 mb-10",
                 h1 { class: "font-bold text-4xl sm:text-6xl text-neutral-800 my-4", "Projects" }
                 projects
             }
-            div { class: "roboto-mono text-right w-full mt-16",
+            div { class: "w-full mt-16 mb-10",
                 h1 { class: "font-bold text-4xl sm:text-6xl text-neutral-800 my-4", "Articles" }
                 articles
             }
@@ -203,18 +219,8 @@ fn Content(cx: Scope) -> Element {
     })
 }
 
-fn Contacts(cx: Scope) -> Element {
-    let contacts_url = "https://raw.githubusercontent.com/lectromoe/Data/master/contacts.json";
-
-    let contacts = use_future(cx, (), |_| async move {
-        match fetch_data::<Vec<Contact>>(contacts_url).await {
-            Ok(contacts) => contacts,
-            Err(err) => {
-                log::error!("{:?}", err);
-                vec![]
-            }
-        }
-    });
+#[inline_props]
+fn Contacts<'a>(cx: Scope<'a>, contacts: &'a UseFuture<Vec<Contact>>) -> Element<'a> {
     let contacts = rsx! {
         match contacts.value() {
             Some(contacts) => rsx! {
@@ -242,10 +248,10 @@ fn Contacts(cx: Scope) -> Element {
 
     cx.render(rsx! {
         TopBar { }
-        div { class: "my-auto text-center my-auto",
-            h1 { class: "font-bold text-4xl text-neutral-800 sm:text-6xl", "Contacts" }
+        div { class: "my-auto my-auto",
+            h1 { class: "font-bold text-center text-4xl text-neutral-800 sm:text-6xl", "Contacts" }
             contacts
-            p { class: "text-neutral-600", "feel free to contact me for any reason" }
+            p { class: "text-neutral-600 text-center", "feel free to contact me for any reason" }
         }
     })
 }
