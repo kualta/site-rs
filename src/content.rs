@@ -15,9 +15,9 @@ pub struct Project {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Article {
     pub name: String,
-    pub date: String,
-    pub tag: String,
-    pub links: Vec<String>,
+    pub description: String,
+    pub theme: String,
+    pub links: Vec<(String, String)>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]

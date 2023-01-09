@@ -20,8 +20,7 @@ fn main() {
 
 fn App(cx: Scope) -> Element {
     cx.render(rsx! {
-        Background { }
-        main { class: "flex flex-col w-max h-screen sm:w-3/4 xl:w-1/2 mx-auto text-xl text-stone-200",
+        main { class: "flex flex-col w-screen h-screen lg:w-5/6 xl:w-2/3 mx-auto text-xl text-stone-200",
             Router {
                 Route { to: "/", Home {} }
                 Route { to: "/content", Content {} }
@@ -103,10 +102,11 @@ where
 }
 
 fn Content(cx: Scope) -> Element {
-    let url = "https://raw.githubusercontent.com/lectromoe/Data/master/projects.json";
+    let projects_url = "https://raw.githubusercontent.com/lectromoe/Data/master/projects.json";
+    let articles_url = "https://raw.githubusercontent.com/lectromoe/Data/master/articles.json";
 
     let projects = use_future(cx, (), |_| async move {
-        match fetch_data::<Vec<Project>>(url).await {
+        match fetch_data::<Vec<Project>>(projects_url).await {
             Ok(projects) => projects,
             Err(err) => {
                 log::error!("{:?}", err);
@@ -114,25 +114,33 @@ fn Content(cx: Scope) -> Element {
             }
         }
     });
+    let articles = use_future(cx, (), |_| async move {
+        match fetch_data::<Vec<Article>>(articles_url).await {
+            Ok(articles) => articles,
+            Err(err) => {
+                log::error!("{:?}", err);
+                vec![]
+            }
+        }
+    });
 
-    cx.render(rsx! {
-        TopBar { }
+    let projects = rsx! {
         match projects.value() {
             Some(project) => rsx! {
-                table { class: "absolute inset-0 mx-auto mt-32 table-auto w-full lg:w-5/6 xl:w-2/3 text-base",
+                table { class: "relative table-auto w-full",
                     tr { class: "text-left",
-                        th { class: "text-center", "name" }
-                        th { class: "", "description" }
-                        th { class: "text-center", "language" }
-                        th { class: "", "stack" }
-                        th { class: "", "links" }
+                        th { class: "px-4 w-24 sm:w-48",    "name" }
+                        th { class: "",             "description" }
+                        th { class: "text-center",  "language" }
+                        th { class: "",             "stack" }
+                        th { class: "",   "links" }
                     }
                     project.iter().map(|project| rsx! {
-                        tr { class: "border-neutral-700 border-y-2 font-medium text-left",
-                            td { class: "font-bold text-center", project.name.as_str() }
-                            td { class: "", project.description.as_str() }
-                            td { class: "text-center", project.language.as_str() }
-                            td { class: "py-4", project.stack.as_str() }
+                        tr { class: "border-neutral-700 border-y-2 text-left",
+                            td { class: "font-bold px-4", project.name.as_str() }
+                            td { class: "",                      project.description.as_str() }
+                            td { class: "text-center",           project.language.as_str() }
+                            td { class: "py-4",                  project.stack.as_str() }
                             td { class: "", project.links.iter().map(|link| rsx! {
                                 a { class: "underline pr-2", href: link.1.as_str(), link.0.as_str()}})
                             }
@@ -143,9 +151,54 @@ fn Content(cx: Scope) -> Element {
             None => rsx! {
                 div { class: "mx-auto",
                     div {
-                        p { "No content... Too bad!" }
+                        p { "No projects... Too bad!" }
                     }
                 }
+            }
+        }
+    };
+    let articles = rsx! {
+        match articles.value() {
+            Some(articles) => rsx! {
+                table { class: "relative table-auto w-full",
+                    tr { class: "text-left",
+                        th { class: "px-4 w-24 sm:w-48", "name" }
+                        th { class: "",            "description" }
+                        th { class: "text-center", "theme" }
+                        th { class: "",            "links" }
+                    }
+                    articles.iter().map(|article| rsx! {
+                        tr { class: "border-neutral-700 border-y-2 text-left",
+                            td { class: "font-bold px-4", article.name.as_str() }
+                            td { class: "",                      article.description.as_str() }
+                            td { class: "py-4 text-center",                  article.theme.as_str() }
+                            td { class: "", article.links.iter().map(|link| rsx! {
+                                a { class: "underline pr-2", href: link.1.as_str(), link.0.as_str()}})
+                            }
+                        }
+                    })
+                }
+            },
+            None => rsx! {
+                div { class: "mx-auto",
+                    div {
+                        p { "No articles... Something went wrong!" }
+                    }
+                }
+            }
+        }
+    };
+
+    cx.render(rsx! {
+        TopBar { }
+        div { class: "flex flex-col place-items-center text-xs sm:text-sm md:text-base",
+            div { class: "roboto-mono text-left w-full mt-4",
+                h1 { class: "font-bold text-4xl sm:text-6xl text-neutral-800 my-4", "Projects" }
+                projects
+            }
+            div { class: "roboto-mono text-right w-full mt-16",
+                h1 { class: "font-bold text-4xl sm:text-6xl text-neutral-800 my-4", "Articles" }
+                articles
             }
         }
     })
@@ -162,13 +215,5 @@ fn Contacts(cx: Scope) -> Element {
     cx.render(rsx! {
         TopBar { }
         "contacts"
-    })
-}
-
-fn Background(cx: Scope) -> Element {
-    cx.render(rsx! {
-        div {
-            class: "absolute inset-0 -z-10 h-full w-full bg-[#101112]"
-        }
     })
 }
