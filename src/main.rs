@@ -2,7 +2,7 @@
 
 mod content;
 
-use content::{Article, Contact, Project};
+use content::{Article, Contact, Data, Project};
 use dioxus::prelude::*;
 use dioxus_router::*;
 use serde::de::DeserializeOwned;
@@ -19,38 +19,25 @@ fn main() {
 }
 
 fn App(cx: Scope) -> Element {
-    let contacts_url = "https://raw.githubusercontent.com/lectromoe/Data/master/contacts.json";
-    let projects_url = "https://raw.githubusercontent.com/lectromoe/Data/master/projects.json";
-    let articles_url = "https://raw.githubusercontent.com/lectromoe/Data/master/articles.json";
-
-    // TODO
-    let contacts = use_future(cx, (), |_| async move {
-        match fetch_data::<Vec<Contact>>(contacts_url).await {
-            Ok(contacts) => contacts,
+    let url = "https://raw.githubusercontent.com/lectromoe/Data/master/contacts.json";
+    let data = use_future(cx, (), |_| async move {
+        match fetch_data::<Data>(url).await {
+            Ok(data) => data,
             Err(err) => {
                 log::error!("{:?}", err);
-                vec![]
+                panic!()
             }
         }
     });
-    let projects = use_future(cx, (), |_| async move {
-        match fetch_data::<Vec<Project>>(projects_url).await {
-            Ok(projects) => projects,
-            Err(err) => {
-                log::error!("{:?}", err);
-                vec![]
-            }
-        }
-    });
-    let articles = use_future(cx, (), |_| async move {
-        match fetch_data::<Vec<Article>>(articles_url).await {
-            Ok(articles) => articles,
-            Err(err) => {
-                log::error!("{:?}", err);
-                vec![]
-            }
-        }
-    });
+    let (projects, articles, contacts) = if let Some(data) = data.value() {
+        (
+            Some(data.projects.clone()),
+            Some(data.articles.clone()),
+            Some(data.contacts.clone()),
+        )
+    } else {
+        (None, None, None)
+    };
 
     cx.render(rsx! {
         main { class: "flex flex-col w-screen h-screen lg:w-5/6 xl:w-2/3 mx-auto text-xl text-stone-200",
@@ -133,14 +120,19 @@ where
     Ok(data)
 }
 
-#[inline_props]
-fn Content<'a>(
-    cx: Scope<'a>,
-    projects: &'a UseFuture<Vec<Project>>,
-    articles: &'a UseFuture<Vec<Article>>,
-) -> Element<'a> {
+#[derive(PartialEq, Props)]
+struct ContentProps {
+    #[props(optional)]
+    projects: Option<Vec<Project>>,
+    #[props(optional)]
+    articles: Option<Vec<Article>>,
+}
+
+fn Content(cx: Scope<ContentProps>) -> Element {
+    let projects = cx.props.projects;
+    let articles = cx.props.articles;
     let projects = rsx! {
-        match projects.value() {
+        match projects {
             Some(project) => rsx! {
                 table { class: "relative table-auto w-full",
                     tr { class: "text-left",
@@ -173,7 +165,7 @@ fn Content<'a>(
         }
     };
     let articles = rsx! {
-        match articles.value() {
+        match articles {
             Some(articles) => rsx! {
                 table { class: "relative table-auto w-full",
                     tr { class: "text-left",
@@ -219,10 +211,15 @@ fn Content<'a>(
     })
 }
 
-#[inline_props]
-fn Contacts<'a>(cx: Scope<'a>, contacts: &'a UseFuture<Vec<Contact>>) -> Element<'a> {
+#[derive(PartialEq, Props)]
+struct ContactData {
+    contacts: Option<Vec<Contact>>,
+}
+
+fn Contacts(cx: Scope<ContactData>) -> Element {
+    let contacts = cx.props.contacts;
     let contacts = rsx! {
-        match contacts.value() {
+        match contacts {
             Some(contacts) => rsx! {
                 table { class: "table-auto mx-auto m-8",
                     contacts.iter().map(|contact| rsx! {

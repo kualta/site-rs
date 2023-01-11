@@ -1,6 +1,13 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct Data {
+    pub projects: Vec<Project>,
+    pub articles: Vec<Article>,
+    pub contacts: Vec<Contact>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Project {
     pub name: String,
     pub date: String,
