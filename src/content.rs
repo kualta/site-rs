@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Default, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Data {
     pub projects: Vec<Project>,
     pub articles: Vec<Article>,
