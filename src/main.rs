@@ -44,58 +44,27 @@ fn App(cx: Scope) -> Element {
     cx.render(rsx! {
         main { class: "flex flex-col w-screen h-max lg:w-5/6 xl:w-2/3 mx-auto text-xl text-stone-200",
             Router {
-                TopBar { contacts: contacts.clone() }
-                Route { to: "/", HomePage { projects: projects.clone(), articles: articles.clone(), contacts: contacts.clone() } }
-                Route { to: "/content", ContentPage {projects: projects, articles: articles} }
-                Route { to: "/contacts", ContactsPage {contacts: contacts} }
+                Route { to: "/", 
+                    HomePage { contacts: contacts } 
+                    ContentPage { projects: projects, articles: articles }
+                }
             }
         }
     })
 }
 
 #[inline_props]
-fn TopBar(cx: Scope, contacts: Vec<Contact>) -> Element {
-    let title_class = use_state(cx, || {
-        format!(
-            "p-8 text-transparent bg-clip-text text-3xl font-bold {}",
-            "inline-block bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text"
-        )
-    });
-    let title = rsx! { h3 { class: title_class.as_str(), "lectro.moe"}};
-
-    let router = use_route(cx);
-    let url = router.last_segment()?;
-    let links = match url {
-        "" => rsx! {
-            Link { class: "basis-1/3 text-left", to: "/", title }
-            Link { class: "basis-1/3", to: "/", "" }
-            Contacts { contacts: contacts.to_vec() }
-        },
-        _ => rsx! {
-            Link { class: "basis-1/3 text-left", to: "/", title }
-            Link { class: "basis-1/3", to: "/", "" }
-            Contacts { contacts: contacts.to_vec() }
-        },
-    };
+fn HomePage(cx: Scope, contacts: Vec<Contact>) -> Element {
+    let gradient = "inline-block bg-gradient-to-r from-red-300 via-red-200 to-yellow-100 text-transparent bg-clip-text";
+    let title = rsx! { h3 { class: "text-transparent bg-clip-text text-3xl font-bold inline-block bg-gradient-to-r  
+        from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text", "Mathew Lanier"}};
 
     cx.render(rsx! {
-        div { class: "flex flex-row text-xl place-items-baseline place-content-center text-center w-full",
-            links
-        }
-    })
-}
-
-#[inline_props]
-fn HomePage(
-    cx: Scope,
-    projects: Vec<Project>,
-    articles: Vec<Article>,
-    contacts: Vec<Contact>,
-) -> Element {
-    let gradient = "inline-block bg-gradient-to-r from-red-300 via-red-200  to-yellow-100 text-transparent bg-clip-text";
-    cx.render(rsx! {
-        div { class: "flex flex-col h-screen grow-0 place-items-between",
-            div { class: "roboto-mono flex flex-col items-center place-content-evenly lg:flex-row h-4/5",
+        div { class: "flex flex-col h-screen grow-0 justify-center place-items-center space-y-8",
+            div {
+                title
+            }
+            div { class: "roboto-mono flex flex-col items-center place-content-evenly space-x-12 lg:flex-row",
                 div { class: "flex flex-col items-left place-content-around h-24",
                     h3 { " > Software engineer" }
                     span { class: "flex flex-row",
@@ -105,22 +74,19 @@ fn HomePage(
                     }
                     h3 { " > I like to keep things clean" }
                 }
-                div { class: "flex flex-col text-right place-content-around h-16",
+                div { class: "flex flex-col text-right justify-center h-24",
                     h3 { "github: " a { class: "", href:"https://github.com/lectromoe", "@lectromoe" } }
                     h3 { "hr: "  a { class: gradient, href: "mailto:jobs@lectro.moe", "jobs@lectro.moe" } }
                 }
             }
-            div { class: "h-1/5 flex flex-col justify-beginning place-items-center",
-                Link { class: "text-center", to: "/content", 
-                    h3 { class: "roboto-mono", "projects" }
-                    Icon { class: "mx-auto", icon: BsCaretDown } 
-                }
+            div { class: "",
+                Contacts { contacts: contacts.to_vec() }
             }
         }
-        div { class: "h-screen",
-            ContentPage {
-                projects: projects.to_vec(),
-                articles: articles.to_vec(),
+        div { class: "absolute bottom-0 inset-x-0 p-8",
+            a { class: "text-center", href: "#content", 
+                h3 { class: "roboto-mono", "projects" }
+                Icon { class: "mx-auto", icon: BsCaretDown } 
             }
         }
     })
@@ -128,7 +94,7 @@ fn HomePage(
 
 async fn fetch_data<T>(url: &str) -> Result<T, reqwest::Error>
 where
-    T: DeserializeOwned,
+   T: DeserializeOwned,
 {
     let data: T = reqwest::get(url).await?.json::<T>().await?;
     Ok(data)
@@ -137,21 +103,21 @@ where
 #[inline_props]
 fn ContentPage(cx: Scope, projects: Vec<Project>, articles: Vec<Article>) -> Element {
     let projects = rsx! {
-        table { class: "relative table-auto w-full",
+        table { class: "relative table-auto",
             tr { class: "text-left",
-                th { class: "px-4 w-24 sm:w-48", "name" }
-                th { class: "",                  "description" }
-                th { class: "text-center",       "language" }
-                th { class: "",                  "stack" }
-                th { class: "",                  "links" }
+                th { class: "px-4 ", "name" }
+                th { class: "px-4 ",                  "description" }
+                th { class: "px-4 text-center",       "language" }
+                th { class: "px-4 ",                  "stack" }
+                th { class: "px-4 ",                  "links" }
             }
             projects.iter().map(|project| rsx! {
-                tr { class: "border-neutral-700 border-y-2 text-left",
-                    td { class: "font-bold px-4",        project.name.as_str() }
-                    td { class: "",                      project.description.as_str() }
-                    td { class: "text-center",           project.language.as_str() }
-                    td { class: "py-2",                  project.stack.as_str() }
-                    td { class: "", project.links.iter().map(|link| rsx! {
+                tr { class: "border-neutral-800 border-y-2 text-left",
+                    td { class: "px-4 font-bold",        project.name.as_str() }
+                    td { class: "px-4",                      project.description.as_str() }
+                    td { class: "px-4 text-center",           project.language.as_str() }
+                    td { class: "px-4 py-2",                  project.stack.as_str() }
+                    td { class: "px-4", project.links.iter().map(|link| rsx! {
                         a { class: "underline pr-2", href: link.1.as_str(), link.0.as_str()}})
                     }
                 }
@@ -159,19 +125,19 @@ fn ContentPage(cx: Scope, projects: Vec<Project>, articles: Vec<Article>) -> Ele
         }
     };
     let articles = rsx! {
-        table { class: "relative table-auto w-full",
+        table { class: "relative table-auto",
             tr { class: "text-left",
-                th { class: "px-4 w-24 sm:w-48", "name" }
-                th { class: "",            "description" }
-                th { class: "text-center", "theme" }
-                th { class: "",            "links" }
+                th { class: "px-4", "name" }
+                th { class: "px-4",            "description" }
+                th { class: "px-4 text-center", "theme" }
+                th { class: "px-4",            "links" }
             }
             articles.iter().map(|article| rsx! {
-                tr { class: "border-neutral-700 border-y-2 text-left",
-                    td { class: "font-bold px-4", article.name.as_str() }
-                    td { class: "",                      article.description.as_str() }
-                    td { class: "py-2 text-center",                  article.theme.as_str() }
-                    td { class: "", article.links.iter().map(|link| rsx! {
+                tr { class: "border-neutral-800 border-y-2 text-left",
+                    td { class: "px-4 font-bold", article.name.as_str() }
+                    td { class: "px-4",                      article.description.as_str() }
+                    td { class: "px-4 py-2 text-center",                  article.theme.as_str() }
+                    td { class: "px-4", article.links.iter().map(|link| rsx! {
                         a { class: "underline pr-2", href: link.1.as_str(), link.0.as_str()}})
                     }
                 }
@@ -180,12 +146,12 @@ fn ContentPage(cx: Scope, projects: Vec<Project>, articles: Vec<Article>) -> Ele
     };
 
     cx.render(rsx! {
-        div { class: "flex roboto-mono text-center flex-col place-items-center text-xs sm:text-sm md:text-base",
-            div { class: "w-full mt-16 mb-10",
+        div { class: "h-screen flex roboto-mono text-center flex-col place-items-center justify-center text-xs sm:text-sm md:text-base", id: "content",
+            div { class: "mt-16 mb-10 ",
                 h1 { class: "font-bold text-4xl sm:text-6xl text-neutral-800 my-4", "Projects" }
                 projects
             }
-            div { class: "w-full mt-16 mb-10",
+            div { class: "mt-16 mb-10",
                 h1 { class: "font-bold text-4xl sm:text-6xl text-neutral-800 my-4", "Articles" }
                 articles
             }
@@ -222,17 +188,6 @@ fn Contacts(cx: Scope, contacts: Vec<Contact>) -> Element {
     cx.render(rsx! {
         div { class: "flex flex-row place-items-center justify-center space-x-4",
             contacts
-        }
-    })
-}
-
-#[inline_props]
-fn ContactsPage(cx: Scope, contacts: Vec<Contact>) -> Element {
-    cx.render(rsx! {
-        div { class: "mx-auto my-auto",
-            div { class: "flex flex-row min-w-fit space-x-4",
-                Contacts { contacts: contacts.to_vec() }
-            }
         }
     })
 }
