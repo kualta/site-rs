@@ -6,7 +6,7 @@ use content::{Article, Contact, Data, Project};
 use dioxus::prelude::*;
 use dioxus_free_icons::icons::bs_icons::{
     BsCaretDown, BsDiscord, BsEnvelopeFill, BsGithub, BsLink45deg, BsMastodon, BsTelegram,
-    BsTwitter,
+    BsTwitter, BsYoutube,
 };
 use dioxus_free_icons::Icon;
 use dioxus_router::*;
@@ -168,6 +168,7 @@ fn SocialsIcon(name: &str) -> LazyNodes<'_, '_>{
         "mastodon" => rsx! { Icon { width: 25, height: 25, icon: BsMastodon } },
         "discord"  => rsx! { Icon { width: 25, height: 25, icon: BsDiscord } },
         "twitter"  => rsx! { Icon { width: 25, height: 25, icon: BsTwitter } },
+        "youtube"  => rsx! { Icon { width: 25, height: 25, icon: BsYoutube } },
         _          => rsx! { Icon { width: 25, height: 25, icon: BsLink45deg } },
     }
 }
