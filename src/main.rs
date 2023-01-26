@@ -13,7 +13,7 @@ use dioxus_router::*;
 use serde::de::DeserializeOwned;
 
 pub const PUBLIC_URL: &str = "/";
-pub const DATA_URL: &str = "https://raw.githubusercontent.com/lectromoe/Data/master/data.json";
+pub const DATA_URL: &str = "https://raw.githubusercontent.com/kualta/Data/master/data.json";
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
@@ -57,7 +57,7 @@ fn App(cx: Scope) -> Element {
 fn HomePage(cx: Scope, contacts: Vec<Contact>) -> Element {
     let gradient = "inline-block bg-gradient-to-r from-red-300 via-red-200 to-yellow-100 text-transparent bg-clip-text";
     let title = rsx! { h3 { class: "text-transparent bg-clip-text text-3xl font-bold inline-block bg-gradient-to-r  
-        from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text", "Mathew Lanier"}};
+        from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text", "kualta"}};
 
     cx.render(rsx! {
         div { class: "flex flex-col h-screen grow-0 justify-center place-items-center space-y-8",
@@ -75,8 +75,8 @@ fn HomePage(cx: Scope, contacts: Vec<Contact>) -> Element {
                     h3 { " > I like to keep things clean" }
                 }
                 div { class: "flex flex-col text-right justify-center h-24",
-                    h3 { "github: " a { class: "", href:"https://github.com/lectromoe", "@lectromoe" } }
-                    h3 { "hr: "  a { class: gradient, href: "mailto:jobs@lectro.moe", "jobs@lectro.moe" } }
+                    h3 { "github: " a { class: "", href:"https://github.com/kualta", "@kualta" } }
+                    h3 { "hr: "  a { class: gradient, href: "mailto:jobs@kualta.dev", "jobs@kualta.dev" } }
                 }
             }
             div { class: "",
