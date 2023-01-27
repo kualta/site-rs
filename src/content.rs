@@ -13,6 +13,7 @@ pub struct Entry {
     pub description: String,
     pub link: String,
     pub theme: Option<String>,
+    pub language: Option<String>,
     pub date: Option<String>,
     pub stack: Option<String>,
     pub status: Option<String>,
