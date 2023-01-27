@@ -2,6 +2,8 @@
 
 mod content;
 
+use std::ops::Deref;
+
 use content::{Article, Contact, Data, Project};
 use dioxus::prelude::*;
 use dioxus_free_icons::icons::bs_icons::{
@@ -10,6 +12,8 @@ use dioxus_free_icons::icons::bs_icons::{
 };
 use dioxus_free_icons::Icon;
 use dioxus_router::*;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use serde::de::DeserializeOwned;
 
 pub const PUBLIC_URL: &str = "/";
@@ -42,51 +46,28 @@ fn App(cx: Scope) -> Element {
     };
 
     cx.render(rsx! {
-        main { class: "flex flex-col w-screen h-max lg:w-5/6 xl:w-2/3 mx-auto text-xl text-stone-200",
-            Router {
-                Route { to: "/", 
-                    HomePage { contacts: contacts } 
-                    ContentPage { projects: projects, articles: articles }
-                }
-            }
+        main { class: "mx-auto flex flex-col min-h-screen max-w-2xl text-stone-200",
+            Header { contacts: contacts }
+            Projects { projects: projects }
+            Articles { articles: articles }
         }
     })
 }
 
 #[inline_props]
-fn HomePage(cx: Scope, contacts: Vec<Contact>) -> Element {
-    let gradient = "inline-block bg-gradient-to-r from-red-300 via-red-200 to-yellow-100 text-transparent bg-clip-text";
-    let title = rsx! { h3 { class: "text-transparent bg-clip-text text-3xl font-bold inline-block bg-gradient-to-r  
-        from-red-200 via-red-300 to-yellow-200 text-transparent bg-clip-text", "kualta"}};
-
+fn Header(cx: Scope, contacts: Vec<Contact>) -> Element {
+    let mut rng = rand::thread_rng();
+    let dict = vec![
+        "simply makes things", 
+        "makes simple things",
+        "makes things simple", 
+    ];
+    let text = dict.choose(&mut rng).unwrap().deref();
     cx.render(rsx! {
-        div { class: "flex flex-col h-screen grow-0 justify-center place-items-center space-y-8",
-            div {
-                title
-            }
-            div { class: "roboto-mono flex flex-col items-center place-content-evenly space-x-12 lg:flex-row",
-                div { class: "flex flex-col items-left place-content-around h-24",
-                    h3 { " > Software engineer" }
-                    span { class: "flex flex-row",
-                        p { ">  " }
-                        p { class: gradient, "Rust" }
-                        p { ", C++, TypeScript" }
-                    }
-                    h3 { " > I like to keep things clean" }
-                }
-                div { class: "flex flex-col text-right justify-center h-24",
-                    h3 { "github: " a { class: "", href:"https://github.com/kualta", "@kualta" } }
-                    h3 { "hr: "  a { class: gradient, href: "mailto:jobs@kualta.dev", "jobs@kualta.dev" } }
-                }
-            }
-            div { class: "",
+        header { class: "container",
+            div { class: "flex items-center justify-between roboto-mono border-neutral-800 border-b py-4",
+                span { b { "kualta "} text }
                 Contacts { contacts: contacts.to_vec() }
-            }
-        }
-        div { class: "absolute bottom-0 inset-x-0 p-8",
-            a { class: "text-center", href: "#content", 
-                h3 { class: "roboto-mono", "projects" }
-                Icon { class: "mx-auto", icon: BsCaretDown } 
             }
         }
     })
@@ -94,14 +75,14 @@ fn HomePage(cx: Scope, contacts: Vec<Contact>) -> Element {
 
 async fn fetch_data<T>(url: &str) -> Result<T, reqwest::Error>
 where
-   T: DeserializeOwned,
+    T: DeserializeOwned,
 {
     let data: T = reqwest::get(url).await?.json::<T>().await?;
     Ok(data)
 }
 
 #[inline_props]
-fn ContentPage(cx: Scope, projects: Vec<Project>, articles: Vec<Article>) -> Element {
+fn Projects(cx: Scope, projects: Vec<Project>) -> Element {
     let projects = rsx! {
         table { class: "relative table-auto",
             tr { class: "text-left",
@@ -113,8 +94,8 @@ fn ContentPage(cx: Scope, projects: Vec<Project>, articles: Vec<Article>) -> Ele
             }
             projects.iter().map(|project| rsx! {
                 tr { class: "border-neutral-800 border-y-2 text-left",
-                    td { class: "px-4 font-bold",        project.name.as_str() }
-                    td { class: "px-4",                      project.description.as_str() }
+                    td { class: "px-4 font-bold",             project.name.as_str() }
+                    td { class: "px-4",                       project.description.as_str() }
                     td { class: "px-4 text-center",           project.language.as_str() }
                     td { class: "px-4 py-2",                  project.stack.as_str() }
                     td { class: "px-4", project.links.iter().map(|link| rsx! {
@@ -124,6 +105,19 @@ fn ContentPage(cx: Scope, projects: Vec<Project>, articles: Vec<Article>) -> Ele
             })
         }
     };
+
+    cx.render(rsx! {
+        div { class: "h-screen flex roboto-mono text-center flex-col place-items-center justify-center text-xs sm:text-sm md:text-base", id: "content",
+            div { class: "mt-16 mb-10 ",
+                h1 { class: "font-bold text-4xl sm:text-6xl text-neutral-800 my-4", "Projects" }
+                projects
+            }
+        }
+    })
+}
+
+#[inline_props]
+fn Articles(cx: Scope, articles: Vec<Article>) -> Element {
     let articles = rsx! {
         table { class: "relative table-auto",
             tr { class: "text-left",
@@ -147,10 +141,6 @@ fn ContentPage(cx: Scope, projects: Vec<Project>, articles: Vec<Article>) -> Ele
 
     cx.render(rsx! {
         div { class: "h-screen flex roboto-mono text-center flex-col place-items-center justify-center text-xs sm:text-sm md:text-base", id: "content",
-            div { class: "mt-16 mb-10 ",
-                h1 { class: "font-bold text-4xl sm:text-6xl text-neutral-800 my-4", "Projects" }
-                projects
-            }
             div { class: "mt-16 mb-10",
                 h1 { class: "font-bold text-4xl sm:text-6xl text-neutral-800 my-4", "Articles" }
                 articles
@@ -160,29 +150,26 @@ fn ContentPage(cx: Scope, projects: Vec<Project>, articles: Vec<Article>) -> Ele
 }
 
 #[rustfmt::skip]
-fn SocialsIcon(name: &str) -> LazyNodes<'_, '_>{
+fn SocialIcon(name: &str) -> LazyNodes<'_, '_>{
     match name {
-        "github"   => rsx! { Icon { width: 25, height: 25, icon: BsGithub } },
-        "mail"     => rsx! { Icon { width: 25, height: 25, icon: BsEnvelopeFill } },
-        "telegram" => rsx! { Icon { width: 25, height: 25, icon: BsTelegram } },
-        "mastodon" => rsx! { Icon { width: 25, height: 25, icon: BsMastodon } },
-        "discord"  => rsx! { Icon { width: 25, height: 25, icon: BsDiscord } },
-        "twitter"  => rsx! { Icon { width: 25, height: 25, icon: BsTwitter } },
-        "youtube"  => rsx! { Icon { width: 25, height: 25, icon: BsYoutube } },
-        _          => rsx! { Icon { width: 25, height: 25, icon: BsLink45deg } },
+        "github"   => rsx! { Icon { width: 20, height: 20, icon: BsGithub } },
+        "mail"     => rsx! { Icon { width: 20, height: 20, icon: BsEnvelopeFill } },
+        "telegram" => rsx! { Icon { width: 20, height: 20, icon: BsTelegram } },
+        "mastodon" => rsx! { Icon { width: 20, height: 20, icon: BsMastodon } },
+        "discord"  => rsx! { Icon { width: 20, height: 20, icon: BsDiscord } },
+        "twitter"  => rsx! { Icon { width: 20, height: 20, icon: BsTwitter } },
+        "youtube"  => rsx! { Icon { width: 20, height: 20, icon: BsYoutube } },
+        _          => rsx! { Icon { width: 20, height: 20, icon: BsLink45deg } },
     }
 }
 
 #[inline_props]
 fn Contacts(cx: Scope, contacts: Vec<Contact>) -> Element {
     let contacts = contacts.iter().map(|contact| {
-        let icon = SocialsIcon(&contact.name);
+        let icon = SocialIcon(&contact.name);
 
         rsx! {
-            a { class: "",
-                href: contact.link.as_str(),
-                icon
-            }
+            a { href: contact.link.as_str(), icon }
         }
     });
 
