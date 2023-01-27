@@ -1,0 +1,122 @@
+.shake-x {
+    animation: shake-x .4s ease;
+}
+
+@keyframes shake-x {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    33% {
+        transform: translateX(-5px);
+    }
+
+    66% {
+        transform: translateX(5px);
+    }
+}
+
+.shake-y {
+    animation: shake-y .4s ease;
+}
+
+@keyframes shake-y {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    33% {
+        transform: translateY(-3px);
+    }
+
+    66% {
+        transform: translateY(3px);
+    }
+}
+
+.flip {
+    backface-visibility: visible !important;
+    animation: flip 1s ease-in;
+}
+
+@keyframes flip {
+    0% {
+        transform: perspective(400px) rotateY(0);
+        animation-timing-function: ease-out;
+    }
+
+    40% {
+        transform: perspective(400px) translateZ(150px) rotateY(170deg);
+        animation-timing-function: ease-out;
+    }
+
+    50% {
+        transform: perspective(400px) translateZ(150px) rotateY(190deg) scale(1);
+        animation-timing-function: ease-in;
+    }
+
+    80% {
+        transform: perspective(400px) rotateY(360deg) scale(.95);
+        animation-timing-function: ease-in;
+    }
+
+    100% {
+        transform: perspective(400px) scale(1);
+        animation-timing-function: ease-in;
+    }
+}
+
+.roboto-mono {
+    font-family: 'Roboto Mono', monospace;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+html::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+}
+
+.typewriter-fast h1 {
+    font-family: monospace;
+    overflow: hidden; /* Ensures the content is not revealed until the animation */
+    border-right: .15em solid #ccc; /* The typwriter cursor */
+    white-space: nowrap; /* Keeps the content on a single line */
+    margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+    letter-spacing: .0em; /* Adjust as needed */
+    animation: 
+      typing 1.5s steps(20, end),
+      blink-caret .75s step-end infinite;
+  }
+
+.typewriter h1 {
+    font-family: monospace;
+    overflow: hidden; /* Ensures the content is not revealed until the animation */
+    border-right: .15em solid #ccc; /* The typwriter cursor */
+    white-space: nowrap; /* Keeps the content on a single line */
+    margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+    letter-spacing: .0em; /* Adjust as needed */
+    animation: 
+      typing 2.5s steps(30, end),
+      blink-caret .75s step-end infinite;
+  }
+  
+  /* The typing effect */
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+  
+  /* The typewriter cursor effect */
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #ccc }
+  }

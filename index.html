@@ -1,5 +1,5 @@
 <!DOCTYPE html><html class="min-h-max"><head>
-  <title>Kualta</title>
+  <title>kualta</title>
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,17 +9,44 @@
 
   
   <link rel="icon" href="/icon-3b6b3a4e624aa301.png">
-  <link rel="stylesheet" href="/style-747f4d5ad41e3451.css">
+  <link rel="stylesheet" href="/style-3fc97e06769a93fe.css">
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap');
   </style>
 
-<link rel="preload" href="/site-bd3431511672ee1b_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
-<link rel="modulepreload" href="/site-bd3431511672ee1b.js"></head>
+<link rel="preload" href="/site-b839af12fa7883b3_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
+<link rel="modulepreload" href="/site-b839af12fa7883b3.js"></head>
 
-<body class="bg-[#111111]" id="main">
+<body class="bg-[#111111] min-h-screen" id="main">
 
 
 
-<script type="module">import init from '/site-bd3431511672ee1b.js';init('/site-bd3431511672ee1b_bg.wasm');</script></body></html>
+<script type="module">import init from '/site-b839af12fa7883b3.js';init('/site-b839af12fa7883b3_bg.wasm');</script><script>(function () {
+    var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    var url = protocol + '//' + window.location.host + '/_trunk/ws';
+    var poll_interval = 5000;
+    var reload_upon_connect = () => {
+        window.setTimeout(
+            () => {
+                // when we successfully reconnect, we'll force a
+                // reload (since we presumably lost connection to
+                // trunk due to it being killed, so it will have
+                // rebuilt on restart)
+                var ws = new WebSocket(url);
+                ws.onopen = () => window.location.reload();
+                ws.onclose = reload_upon_connect;
+            },
+            poll_interval);
+    };
+
+    var ws = new WebSocket(url);
+    ws.onmessage = (ev) => {
+        const msg = JSON.parse(ev.data);
+        if (msg.reload) {
+            window.location.reload();
+        }
+    };
+    ws.onclose = reload_upon_connect;
+})()
+</script></body></html>
