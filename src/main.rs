@@ -2,9 +2,8 @@
 
 mod content;
 
-use std::ops::Deref;
-
 use content::{DataSchema, Entry};
+use dioxus::html::title;
 use dioxus::prelude::*;
 use dioxus_free_icons::icons::bs_icons::{
     BsDiscord, BsEnvelopeFill, BsGithub, BsLink45deg, BsMastodon, BsTelegram, BsTwitter, BsYoutube,
@@ -12,6 +11,7 @@ use dioxus_free_icons::icons::bs_icons::{
 use dioxus_free_icons::Icon;
 use rand::seq::SliceRandom;
 use serde::de::DeserializeOwned;
+use std::ops::Deref;
 
 pub const PUBLIC_URL: &str = "/";
 pub const DATA_URL: &str = "https://raw.githubusercontent.com/kualta/Data/master/data.json";
@@ -32,7 +32,7 @@ fn App(cx: Scope) -> Element {
         }
     });
 
-    let (projects, articles, contacts) = if let Some(data) = data.value() {
+    let (projects, posts, contacts) = if let Some(data) = data.value() {
         (
             data.projects.clone(),
             data.articles.clone(),
@@ -43,10 +43,15 @@ fn App(cx: Scope) -> Element {
     };
 
     cx.render(rsx! {
-        main { class: "mx-auto flex flex-col min-h-screen max-w-2xl text-stone-200",
-            Header { contacts: contacts }
-            DataList { projects: projects }
-            DataList { projects: articles }
+        main { class: "mx-auto flex flex-col min-h-screen max-w-2xl text-stone-200 px-4",
+            Header { contacts: contacts.clone() }
+            div { class: "flex-1",
+                div { class: "container flex flex-col",
+                    DataList { data: projects, list_title: "Projects" }
+                    DataList { data: posts, list_title: "Articles" }
+                    DataList { data: contacts, list_title: "Contacts" }
+                }
+            }
         }
     })
 }
@@ -59,7 +64,9 @@ fn Header(cx: Scope, contacts: Vec<Entry>) -> Element {
         "makes simple things",
         "makes things simple",
     ];
-    let text = dict.choose(&mut rng).unwrap().deref();
+    let text = dict.choose(&mut rng).unwrap().deref(); 
+    // TODO: change text every n seconds
+
     cx.render(rsx! {
         header { class: "container",
             div { class: "flex items-center justify-between roboto-mono border-neutral-800 border-b py-4",
@@ -79,21 +86,26 @@ where
 }
 
 #[inline_props]
-fn DataList(cx: Scope, projects: Vec<Entry>) -> Element {
+fn DataList<'a>(cx: Scope, data: Vec<Entry>, list_title: &'a str) -> Element {
     cx.render(rsx! {
-        div { class: "relative table-auto",
-            projects.iter().map(|project| rsx! {
-                tr { class: "border-neutral-800 border-y-2 text-left",
-                    a { href: project.link.as_str(),
-                        match &project.theme {
-                            Some(theme) => rsx! { td { class: "px-4 font-bold", theme.as_str() } },
-                            None => rsx!("")
+        div {class: "container", 
+            h2 { class: "font-semibold text-xl roboto-mono pt-14", list_title.deref() }
+            ul { class: "grid gap-2 py-6 border-neutral-800 border-b list-disc list-inside",
+                data.iter().map(|project| rsx! {
+                    li {
+                        a { class: "py-1 roboto-mono",
+                            href: project.link.as_str(),
+                            span { class: "font-bold", project.name.as_str() }
+                            span { " " }
+                            span { class: "underline decoration-1 underline-offset-2 decoration-neutral-400", project.description.as_str() }
+                            match &project.theme {
+                                Some(theme) => rsx! { span { " (" theme.as_str()  ") "} },
+                                None => rsx!("")
+                            }
                         }
-                        td { class: "px-4 font-bold", project.name.as_str() }
-                        td { class: "px-4", project.description.as_str() }
                     }
-                }
-            })
+                })
+            }
         }
     })
 }
