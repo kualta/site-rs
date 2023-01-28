@@ -3,12 +3,13 @@
 mod content;
 
 use content::{DataSchema, Entry};
-use dioxus::html::title;
 use dioxus::prelude::*;
 use dioxus_free_icons::icons::bs_icons::{
     BsDiscord, BsEnvelopeFill, BsGithub, BsLink45deg, BsMastodon, BsTelegram, BsTwitter, BsYoutube,
 };
 use dioxus_free_icons::Icon;
+use gloo_timers::callback::Timeout;
+use gloo_timers::future::{TimeoutFuture, IntervalStream};
 use rand::seq::SliceRandom;
 use serde::de::DeserializeOwned;
 use std::ops::Deref;
@@ -17,7 +18,9 @@ pub const PUBLIC_URL: &str = "/";
 pub const DATA_URL: &str = "https://raw.githubusercontent.com/kualta/Data/master/data.json";
 
 fn main() {
+    #[cfg(debug_assertions)]
     wasm_logger::init(wasm_logger::Config::default());
+
     dioxus_web::launch(App);
 }
 
@@ -64,13 +67,12 @@ fn Header(cx: Scope, contacts: Vec<Entry>) -> Element {
         "makes simple things",
         "makes things simple",
     ];
-    let text = dict.choose(&mut rng).unwrap().deref(); 
-    // TODO: change text every n seconds
+    let text = dict.choose(&mut rng).unwrap().deref();
 
     cx.render(rsx! {
         header { class: "container",
             div { class: "flex items-center justify-between roboto-mono border-neutral-800 border-b py-4",
-                span { b { "kualta "} text }
+                a { href: "/", b { "kualta "} text }
                 Contacts { contacts: contacts.to_vec() }
             }
         }
@@ -97,7 +99,7 @@ fn DataList<'a>(cx: Scope, data: Vec<Entry>, list_title: &'a str) -> Element {
                             href: project.link.as_str(),
                             span { class: "font-bold", project.name.as_str() }
                             span { " " }
-                            span { class: "underline decoration-1 underline-offset-2 decoration-neutral-400", project.description.as_str() }
+                            span { class: "underline decoration-1 underline-offset-2 decoration-neutral-400 hover:decoration-2", project.description.as_str() }
                             match &project.theme {
                                 Some(theme) => rsx! { span { " (" theme.as_str()  ") "} },
                                 None => rsx!("")
@@ -113,14 +115,14 @@ fn DataList<'a>(cx: Scope, data: Vec<Entry>, list_title: &'a str) -> Element {
 #[rustfmt::skip]
 fn SocialIcon(name: &str) -> LazyNodes<'_, '_>{
     match name {
-        "github"   => rsx! { Icon { width: 20, height: 20, icon: BsGithub } },
-        "mail"     => rsx! { Icon { width: 20, height: 20, icon: BsEnvelopeFill } },
-        "telegram" => rsx! { Icon { width: 20, height: 20, icon: BsTelegram } },
-        "mastodon" => rsx! { Icon { width: 20, height: 20, icon: BsMastodon } },
-        "discord"  => rsx! { Icon { width: 20, height: 20, icon: BsDiscord } },
-        "twitter"  => rsx! { Icon { width: 20, height: 20, icon: BsTwitter } },
-        "youtube"  => rsx! { Icon { width: 20, height: 20, icon: BsYoutube } },
-        _          => rsx! { Icon { width: 20, height: 20, icon: BsLink45deg } },
+        "github"   => rsx! { Icon { class: "hover:scale-125", width: 20, height: 20, icon: BsGithub } },
+        "email"    => rsx! { Icon { class: "hover:scale-125", width: 20, height: 20, icon: BsEnvelopeFill } },
+        "telegram" => rsx! { Icon { class: "hover:scale-125", width: 20, height: 20, icon: BsTelegram } },
+        "mastodon" => rsx! { Icon { class: "hover:scale-125", width: 20, height: 20, icon: BsMastodon } },
+        "discord"  => rsx! { Icon { class: "hover:scale-125", width: 20, height: 20, icon: BsDiscord } },
+        "twitter"  => rsx! { Icon { class: "hover:scale-125", width: 20, height: 20, icon: BsTwitter } },
+        "youtube"  => rsx! { Icon { class: "hover:scale-125", width: 20, height: 20, icon: BsYoutube } },
+        _          => rsx! { Icon { class: "hover:scale-125", width: 20, height: 20, icon: BsLink45deg } },
     }
 }
 
@@ -130,7 +132,7 @@ fn Contacts(cx: Scope, contacts: Vec<Entry>) -> Element {
         let icon = SocialIcon(&contact.name);
 
         rsx! {
-            a { href: contact.link.as_str(), icon }
+            a { style: "", href: contact.link.as_str(), icon }
         }
     });
 
