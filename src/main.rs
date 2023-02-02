@@ -73,6 +73,13 @@ fn Header(cx: Scope, contacts: Vec<Entry>) -> Element {
         header { class: "container",
             div { class: "flex items-center justify-between roboto-mono border-neutral-800 border-b py-4",
                 a { href: "/", b { "kualta "} text }
+                a { class: "hover:text-stone-300", 
+                    href: "https://blog.kualta.dev/", 
+                    target: "_blank", 
+                    "blog >" 
+                }
+            }
+            div { class: "flex items-left py-4",
                 Contacts { contacts: contacts.to_vec() }
             }
         }
