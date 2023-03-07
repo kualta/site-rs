@@ -8,8 +8,6 @@ use dioxus_free_icons::icons::bs_icons::{
     BsDiscord, BsEnvelopeFill, BsGithub, BsLink45deg, BsMastodon, BsTelegram, BsTwitter, BsYoutube,
 };
 use dioxus_free_icons::Icon;
-use gloo_timers::callback::Timeout;
-use gloo_timers::future::{TimeoutFuture, IntervalStream};
 use rand::seq::SliceRandom;
 use serde::de::DeserializeOwned;
 use std::ops::Deref;
